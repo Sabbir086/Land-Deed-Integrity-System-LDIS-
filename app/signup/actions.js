@@ -22,6 +22,6 @@ export async function signup(_prev, formData) {
     options: { data: { full_name }, ...(site ? { emailRedirectTo: `${site}/login` } : {}) },
   });
   if (error) return { error: "অ্যাকাউন্ট তৈরি করা যায়নি। Could not create the account (the email may already be registered)." };
-  if (data.session) redirect("/dashboard"); // email confirmation disabled
+  if (data.session) redirect("/pending-approval"); // signed up, but approval is required
   return { ok: "অ্যাকাউন্ট তৈরি হয়েছে। ইমেইল নিশ্চিত করার পর লগইন করুন। Account created; confirm your email, then sign in." };
 }

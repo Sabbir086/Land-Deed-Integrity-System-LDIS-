@@ -5,7 +5,7 @@ import { callApi } from "./api";
 
 // division > district > upazila > mouza. Emits { division, district, upazila, location_id, mouza } (location_id set when mouza chosen).
 export default function LocationPicker({ onChange, onError }) {
-  const [sel, setSel] = useState({ division: "", district: "", upazila: "", mouza: "" });
+  const [sel, setSel] = useState({ division: "", district: "", upazila: "", mouza: "", mouzaId: "" });
   const [opts, setOpts] = useState({ division: [], district: [], upazila: [], mouza: [] });
   const [loading, setLoading] = useState("");
 
@@ -25,6 +25,8 @@ export default function LocationPicker({ onChange, onError }) {
     next[level] = level === "mouza"
       ? (opts.mouza.find((m) => String(m.id) === String(value))?.name || "")
       : value;
+    if (level === "mouza") next.mouzaId = value;
+    else next.mouzaId = "";
     setSel(next);
     setOpts((o) => { const c = { ...o }; order.slice(order.indexOf(level) + 1).forEach((l) => (c[l] = [])); return c; });
     const child = order[order.indexOf(level) + 1];
@@ -43,7 +45,7 @@ export default function LocationPicker({ onChange, onError }) {
         const parentChosen = idx === 0 || sel[sels[idx - 1][0]];
         return (
           <Field key={level} label={label} htmlFor={`loc-${level}`} hint={loading === level ? "লোড হচ্ছে…" : undefined}>
-            <Select id={`loc-${level}`} value={level === "mouza" ? (opts.mouza.find((m) => m.name === sel.mouza)?.id || "") : sel[level]}
+            <Select id={`loc-${level}`} value={level === "mouza" ? sel.mouzaId : sel[level]}
               disabled={!parentChosen || list.length === 0} onChange={(e) => pick(level, e.target.value)}>
               <option value="">— নির্বাচন করুন —</option>
               {list.map((o) => (typeof o === "string" ? <option key={o} value={o}>{o}</option> : <option key={o.id} value={o.id}>{o.name}</option>))}

@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Alert, Card, PageHeader } from "@/components/ui";
+import UserApprovalPanel from "@/components/admin/UserApprovalPanel";
 export const dynamic="force-dynamic";
 export const metadata={title:"Admin dashboard"};
 export default async function AdminDashboard(){
@@ -8,7 +9,8 @@ export default async function AdminDashboard(){
  const {data,error}=await createClient().rpc("admin_summary");
  const counts=data?.status_counts||{};
  return <><PageHeader title="Admin dashboard" titleEn="Operations, roles and audit overview"/>
- <Alert tone="warn" title="Admin boundaries">Role changes are not available from this UI. Manage users through an authorized database-admin process. This project is a demo, not an official government registration service.</Alert>
+ <Alert tone="warn" title="Admin access">Admin can access all programme workflows and manage account approvals and roles. This project is a demo, not an official government registration service.</Alert>
+ <UserApprovalPanel />
  {error&&<Alert tone="error">Admin summary unavailable. Apply migrations 06–10 in order and inspect database errors.</Alert>}
  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 my-5">
  <Card title="Normal users"><p className="text-3xl font-bold">{data?.users_total??"—"}</p></Card>

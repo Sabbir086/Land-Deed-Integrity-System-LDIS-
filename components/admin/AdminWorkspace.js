@@ -14,7 +14,7 @@ const services = [
   { id:"apps", title:"List of Applications", subtitle:"আবেদনের তালিকা", detail:"সব জমা দেওয়া আবেদন ও workflow status খুলুন", icon:"☷", tone:"from-slate-700 to-slate-900" },
 ];
 
-export default function AdminWorkspace({ data, error, applications = [], queueError = false }) {
+export default function AdminWorkspace({ data, error, applications = [], queueError = false, isSuperAdmin = false }) {
   const [active, setActive] = useState("");
   const counts = data?.status_counts || {};
   return <div className="space-y-6">
@@ -49,5 +49,6 @@ export default function AdminWorkspace({ data, error, applications = [], queueEr
         {Object.entries(counts).map(([status,n])=><Card key={status} title={status}><p className="text-3xl font-bold">{n}</p></Card>)}
       </div>
     </section>
+    {isSuperAdmin && <Link href="/admin/dummy-data" className="fixed bottom-5 right-5 z-50 rounded-full bg-amber-600 px-5 py-3 text-sm font-bold text-white shadow-xl transition hover:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300">+ Add Dummy Data</Link>}
   </div>;
 }

@@ -16,8 +16,9 @@ export async function login(_prev, formData) {
   if (error || !data?.user) return { error: "ইমেইল বা পাসওয়ার্ড ভুল। Incorrect email or password." }; // generic on purpose
 
   // Role comes from public.profiles (trusted), never from the form.
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+  const { data: profile } = await supabase.from("profiles").select("role,is_approved").eq("id", data.user.id).maybeSingle();
   if (!profile) { await supabase.auth.signOut(); return { error: "এই অ্যাকাউন্টের প্রোফাইল পাওয়া যায়নি। Profile row missing; contact the administrator." }; }
+  if (profile.is_approved === false) { await supabase.auth.signOut(); return { error: "আপনার অ্যাকাউন্ট এখনো Admin অনুমোদন করেননি। Your account is awaiting administrator approval." }; }
   const home = homeFor(profile.role);
   // `next` is honoured only for ordinary users; privileged roles always land on their own dashboard.
   redirect(profile.role === "user" ? safeNext(next, home) : home);

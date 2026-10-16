@@ -9,8 +9,8 @@ export async function POST(request, { params }) {
   const supabase = createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return NextResponse.json({ error: "Please sign in." }, { status: 401 });
-  const { data: profile } = await supabase.from("profiles").select("role,district,upazila").eq("id", user.id).maybeSingle();
-  if (!profile || !["admin", "sub_registrar"].includes(profile.role)) return NextResponse.json({ error: "Staff access required." }, { status: 403 });
+  const { data: profile } = await supabase.from("profiles").select("role,district,upazila,is_approved").eq("id", user.id).maybeSingle();
+  if (!profile || profile.is_approved === false || !["admin", "sub_registrar"].includes(profile.role)) return NextResponse.json({ error: "Staff access required." }, { status: 403 });
   if (action === "summary" && profile.role !== "admin") return NextResponse.json({ error: "Admin access required." }, { status: 403 });
   let body = {};
   try { body = await request.json(); } catch {}

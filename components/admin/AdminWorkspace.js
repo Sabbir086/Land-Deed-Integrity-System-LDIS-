@@ -49,6 +49,5 @@ export default function AdminWorkspace({ data, error, applications = [], queueEr
         {Object.entries(counts).map(([status,n])=><Card key={status} title={status}><p className="text-3xl font-bold">{n}</p></Card>)}
       </div>
     </section>
-    {isSuperAdmin && <Link href="/admin/dummy-data" className="fixed bottom-5 right-5 z-50 rounded-full bg-amber-600 px-5 py-3 text-sm font-bold text-white shadow-xl transition hover:bg-amber-700 focus:outline-none focus:ring-4 focus:ring-amber-300">+ Add Dummy Data</Link>}
   </div>;
 }

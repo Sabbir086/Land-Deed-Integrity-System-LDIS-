@@ -1,4 +1,5 @@
-import Link from "next/link";\nimport NewApplicationButton from "@/components/applications/NewApplicationButton";
+import Link from "next/link";
+import NewApplicationButton from "@/components/applications/NewApplicationButton";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 

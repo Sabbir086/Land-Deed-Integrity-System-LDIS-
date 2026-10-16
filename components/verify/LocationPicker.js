@@ -22,12 +22,14 @@ export default function LocationPicker({ onChange, onError }) {
     const order = ["division", "district", "upazila", "mouza"];
     const next = { ...sel };
     order.slice(order.indexOf(level)).forEach((l) => (next[l] = ""));
-    next[level] = value;
+    next[level] = level === "mouza"
+      ? (opts.mouza.find((m) => String(m.id) === String(value))?.name || "")
+      : value;
     setSel(next);
     setOpts((o) => { const c = { ...o }; order.slice(order.indexOf(level) + 1).forEach((l) => (c[l] = [])); return c; });
     const child = order[order.indexOf(level) + 1];
     if (value && child) load(child, { division: next.division, district: next.district, upazila: next.upazila });
-    const mouzaObj = level === "mouza" ? opts.mouza.find((m) => m.id === value) : null;
+    const mouzaObj = level === "mouza" ? opts.mouza.find((m) => String(m.id) === String(value)) : null;
     onChange({ ...next, location_id: mouzaObj ? mouzaObj.id : null, mouza: mouzaObj ? mouzaObj.name : "" });
   }
 

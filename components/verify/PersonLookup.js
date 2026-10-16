@@ -11,10 +11,10 @@ export default function PersonLookup() {
   const d = st.data;
   return (
     <div className="space-y-4">
-      <Card title="NID নম্বর ও জন্মতারিখ" subtitle="দুটোই মিললে তবেই রেকর্ড দেখানো হয়">
+      <Card title="NID নম্বর ও জন্মতারিখ (ঐচ্ছিক)" subtitle="NID নম্বর আবশ্যক; জন্মতারিখ দিলে ফলাফল আরও নির্ভুল হয়">
         <form onSubmit={(e) => { e.preventDefault(); run("/api/verify/nid", { nid_no: nid, dob }); }} className="space-y-4">
           <IdentityFields nid={nid} dob={dob} onNid={setNid} onDob={setDob} />
-          <Button type="submit" disabled={st.loading || !nid || !dob}>যাচাই করুন</Button>
+          <Button type="submit" disabled={st.loading || !nid}>যাচাই করুন</Button>
           {st.loading && <Spinner />}
         </form>
       </Card>

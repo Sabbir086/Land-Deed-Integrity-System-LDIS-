@@ -5,7 +5,7 @@ const forms = {
   echallans: { title: "E-Challan তথ্য", fields: [
     ["challan_no","E-Challan নম্বর","text",true],["amount","জমার পরিমাণ (টাকা)","number",true],
     ["fee_type","কোন খাতে জমা","select",true,["stamp","registration","source_tax","other"]],
-    ["paid_on","জমার তারিখ","date",true],["verify_status","যাচাইয়ের অবস্থা","select",true,["valid","invalid","pending"]],
+    ["paid_on","জমার তারিখ","date",true],["verify_status","যাচাইয়ের অবস্থা","select",true,["verified","invalid","pending"]],
     ["used_in_application_no","সংশ্লিষ্ট আবেদন নম্বর (যদি থাকে)","text",false]
   ]},
   nid_persons: { title: "NID / ব্যক্তির তথ্য", fields: [

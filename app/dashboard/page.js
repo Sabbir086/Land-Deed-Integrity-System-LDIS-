@@ -2,7 +2,6 @@ import { requireRole } from "@/lib/auth";
 import { Alert, Card, PageHeader } from "@/components/ui";
 import ProfileCard from "@/components/ProfileCard";
 import ToolTile from "@/components/ToolTile";
-import VerifyTools from "@/components/verify/Tools";
 import { createClient } from "@/lib/supabase/server";
 import NewApplicationButton from "@/components/applications/NewApplicationButton";
 import { NotificationList } from "@/components/applications/DetailActions";
@@ -26,7 +25,6 @@ export default async function UserDashboard() {
       <PageHeader title="ব্যবহারকারী ড্যাশবোর্ড" titleEn="User dashboard" description={`স্বাগতম, ${profile.full_name || profile.email}।`} />
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <section aria-labelledby="tools"><h2 id="tools" className="mb-3 text-lg font-semibold">যাচাই সেবা <span className="text-sm font-normal text-slate-500">Verification tools (functional)</span></h2><VerifyTools /></section>
           <section aria-labelledby="apps"><h2 id="apps" className="mb-3 text-lg font-semibold">আবেদন <span className="text-sm font-normal text-slate-500">Applications</span></h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <Card title="নতুন দলিলের আবেদন" subtitle="Apply for Deed"><p className="mb-3 text-sm text-slate-600">ধাপে ধাপে আবেদন; প্রতিটি ধাপে সংরক্ষণ করে পরে চালিয়ে যাওয়া যায়।</p><NewApplicationButton /></Card>

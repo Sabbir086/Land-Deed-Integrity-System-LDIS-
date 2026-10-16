@@ -1,42 +1,36 @@
+import Link from "next/link";\nimport NewApplicationButton from "@/components/applications/NewApplicationButton";
 import { requireRole } from "@/lib/auth";
-import { Alert, Card, PageHeader } from "@/components/ui";
-import ProfileCard from "@/components/ProfileCard";
-import ToolTile from "@/components/ToolTile";
 import { createClient } from "@/lib/supabase/server";
-import NewApplicationButton from "@/components/applications/NewApplicationButton";
-import { NotificationList } from "@/components/applications/DetailActions";
-import { statusMeta } from "@/lib/applications/status";
+
+
 
 export const dynamic = "force-dynamic";
-
 export const metadata = { title: "ব্যবহারকারী ড্যাশবোর্ড" };
 
 export default async function UserDashboard() {
   const { profile } = await requireRole(["user"]);
   const supabase = createClient();
-  // Both reads are protected by RLS (own rows only). Failures (migrations not installed) degrade to empty.
-  const [{ data: apps }, { data: notes }] = await Promise.all([
-    supabase.from("deed_applications").select("status"),
-    supabase.from("user_notifications").select("id,title_bn,title_en,created_at,read_at").order("created_at", { ascending: false }).limit(8),
-  ]);
-  const counts = {}; (apps || []).forEach((a) => { counts[a.status] = (counts[a.status] || 0) + 1; });
-  return (
-    <>
-      <PageHeader title="ব্যবহারকারী ড্যাশবোর্ড" titleEn="User dashboard" description={`স্বাগতম, ${profile.full_name || profile.email}।`} />
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          <section aria-labelledby="apps"><h2 id="apps" className="mb-3 text-lg font-semibold">আবেদন <span className="text-sm font-normal text-slate-500">Applications</span></h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Card title="নতুন দলিলের আবেদন" subtitle="Apply for Deed"><p className="mb-3 text-sm text-slate-600">ধাপে ধাপে আবেদন; প্রতিটি ধাপে সংরক্ষণ করে পরে চালিয়ে যাওয়া যায়।</p><NewApplicationButton /></Card>
-              <ToolTile href="/dashboard/applications" title="আমার আবেদনসমূহ" en="My applications" text={Object.keys(counts).length ? Object.entries(counts).map(([s, n]) => `${statusMeta(s).bn}: ${n}`).join(" · ") : "এখনো কোনো আবেদন নেই।"} />
-            </div>
-          </section>
-        </div>
-        <div className="space-y-4"><ProfileCard profile={profile} />
-          <Card title="বিজ্ঞপ্তি · Notifications"><NotificationList items={notes || []} /></Card>
-        </div>
-      </div>
-      <div className="mt-6"><Alert tone="info">সাব-রেজিস্ট্রারের পর্যালোচনা, বায়োমেট্রিক গ্রহণ ও নিবন্ধন পরবর্তী ধাপে (Stage 3) যুক্ত হবে। Registrar review, biometric capture and registration arrive in Stage 3.</Alert></div>
-    </>
-  );
+  const { data: apps } = await supabase.from("deed_applications").select("status");
+  const total = (apps || []).length;
+  const pending = (apps || []).filter((a) => !["registered", "rejected", "withdrawn"].includes(a.status)).length;
+  const tiles = [
+    { href: "/dashboard/applications/new", title: "দলিল নিবন্ধনের আবেদন", en: "Apply for deed registration", description: "জমির তথ্য, দাতা-গ্রহীতা যাচাই, ফি ও প্রয়োজনীয় ধাপ সম্পন্ন করুন।", icon: "＋", tone: "from-orange-500 to-amber-500", stat: "নতুন আবেদন শুরু করুন" },
+    { href: "/dashboard/applications", title: "আবেদনের অবস্থা", en: "Application status", description: "আপনার খসড়া, জমা দেওয়া আবেদন এবং সর্বশেষ অগ্রগতি দেখুন।", icon: "▤", tone: "from-teal-600 to-cyan-600", stat: `${total}টি আবেদন · ${pending}টি চলমান` },
+  ];
+  return <main className="space-y-7">
+    <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 text-white shadow-xl sm:p-9">
+      <p className="text-sm font-semibold tracking-wide text-amber-300">LAND DEED INTEGRITY SYSTEM</p>
+      <h1 className="mt-3 text-2xl font-bold sm:text-3xl">স্বাগতম, {profile.full_name || profile.email}</h1><p className="mt-2 max-w-2xl text-sm text-slate-300">আপনার দলিল নিবন্ধন আবেদন শুরু করুন অথবা আগের আবেদনের অগ্রগতি দেখুন।</p>
+      <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm"><span className="h-2 w-2 rounded-full bg-emerald-400" /> ব্যবহারকারী · User</div>
+    </div>
+    <section className="grid gap-5 md:grid-cols-2">
+      {tiles.map(({href,title,en,description,icon,tone,stat},i) => <article key={href} className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+        <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} text-white shadow-md`}><span className="text-3xl font-bold">{icon}</span></div>
+        <h2 className="text-xl font-bold text-slate-900">{title}</h2><p className="mt-1 text-sm font-medium text-slate-500">{en}</p>
+        <p className="mt-4 min-h-12 text-sm leading-6 text-slate-600">{description}</p>
+        <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4"><span className="text-sm font-semibold text-slate-700">{stat}</span><span aria-hidden="true" className="text-xl transition group-hover:-translate-y-1 group-hover:translate-x-1">↗</span></div>
+        {i === 0 ? <div className="mt-4"><NewApplicationButton /></div> : <Link className="mt-4 inline-flex font-semibold text-brand-700 underline" href={href}>আবেদনসমূহ দেখুন →</Link>}
+      </article>)}
+    </section>
+  </main>;
 }

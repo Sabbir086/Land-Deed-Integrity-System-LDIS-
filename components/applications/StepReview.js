@@ -13,7 +13,7 @@ export default function StepReview({ view, call, busy, go }) {
   const router = useRouter();
   const a = view.application; const blockers = a.blockers || [];
   const [ok, setOk] = useState(false); const [fail, setFail] = useState(null);
-  const donor = view.parties.find((p) => p.role === "donor"); const donee = view.parties.find((p) => p.role === "donee");
+  const donor = view.parties.find((p) => p.role === "donor"); const donees = view.parties.filter((p) => p.role === "donee" || /^donee_\d+$/.test(p.role));
   const hold = (a.flags || []).some((f) => f.level === "high");
   async function submit() {
     setFail(null);
@@ -23,7 +23,7 @@ export default function StepReview({ view, call, busy, go }) {
     router.push(`/dashboard/applications/${a.id}`); router.refresh();
   }
   const rows = [
-    ["আবেদন নম্বর", a.application_no], ["দাতা", donor?.name_bn || "—"], ["গ্রহীতা", donee?.name_bn || "—"],
+    ["আবেদন নম্বর", a.application_no], ["দাতা", donor?.name_bn || "—"], ["গ্রহীতা", donees.map((p,i)=>`${i+1}. ${p.name_bn || "—"}`).join(" · ") || "—"],
     ["জমি", a.khatian_no ? `${a.upazila}, ${a.mouza} — ${a.khatian_type} খতিয়ান ${a.khatian_no}` : "—"],
     ["মালিকানার ভিত্তি", view.ownership ? { record_owner: "রেকর্ডীয় মালিক", warish: "ওয়ারিশ সূত্র", baya_deed: "বায়া দলিল" }[view.ownership.route] : "—"],
     ["বিক্রয়মূল্য", a.sale_price != null ? `৳ ${Number(a.sale_price).toLocaleString("en-IN")}` : "—"],

@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { StatusPill } from "@/components/ui";
 
-export default function ToolTile({ href, title, en, text, status = "functional" }) {
-  const body = (
-    <div className={`h-full rounded-lg border bg-white p-4 shadow-sm ${href ? "border-slate-200 hover:border-brand-600 hover:shadow" : "border-dashed border-slate-300 opacity-80"}`}>
-      <div className="mb-2 flex items-start justify-between gap-2"><h3 className="font-semibold">{title}<span className="block text-xs font-normal text-slate-500">{en}</span></h3><StatusPill kind={status} /></div>
-      <p className="text-sm text-slate-600">{text}</p>
-    </div>
-  );
-  return href ? <Link href={href} className="block h-full">{body}</Link> : <div aria-disabled="true">{body}</div>;
+export default function ToolTile({ href, title, en, text }) {
+  return <Link href={href} className="group block h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-brand-500 hover:shadow-lg">
+    <div className="flex items-start justify-between gap-3"><div><h3 className="font-semibold text-slate-900">{title}</h3><span className="mt-1 block text-xs text-slate-500">{en}</span></div><span aria-hidden="true" className="text-xl text-brand-700 transition group-hover:translate-x-1">↗</span></div>
+    <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
+  </Link>;
 }

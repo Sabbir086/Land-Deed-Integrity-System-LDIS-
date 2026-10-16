@@ -14,8 +14,8 @@ export default function DeedLookup() {
       <Card title="দলিল নম্বর ও তারিখ">
         <form onSubmit={(e) => { e.preventDefault(); run("/api/verify/deed", { deed_no: no, deed_date: date }); }} className="grid gap-4 sm:grid-cols-3 sm:items-end">
           <Field label="দলিল নম্বর · Deed no." htmlFor="deed-no" hint="যেমন ৫০০১/২০২৩ বা 5001/2023"><Input id="deed-no" value={no} onChange={(e) => setNo(e.target.value)} /></Field>
-          <Field label="দলিলের তারিখ · Deed date" htmlFor="deed-date"><Input id="deed-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></Field>
-          <Button type="submit" disabled={st.loading || !no || !date}>অনুসন্ধান</Button>
+          <Field label="দলিলের তারিখ · Deed date (ঐচ্ছিক)" htmlFor="deed-date"><Input id="deed-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></Field>
+          <Button type="submit" disabled={st.loading || !no}>অনুসন্ধান</Button>
         </form>
         {st.loading && <div className="mt-3"><Spinner /></div>}
       </Card>

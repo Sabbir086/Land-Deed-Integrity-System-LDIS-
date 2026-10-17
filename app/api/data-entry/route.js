@@ -20,7 +20,7 @@ export async function POST(request) {
       console.error("Manual data entry failed:", error.code, error.message);
       return NextResponse.json({ error: error.message || "Insert failed. Check migration 15 and required fields." }, { status: 400 });
     }
-    return NextResponse.json({ success: true, message: "তথ্য সফলভাবে ডাটাবেজে যোগ হয়েছে।", data });
+    return NextResponse.json({ success: true, message: body.table === "echallans" ? "চালানটি তৈরি ও সংরক্ষণ হয়েছে।" : "তথ্য সফলভাবে ডাটাবেজে যোগ হয়েছে।", data });
   } catch {
     return NextResponse.json({ error: "Request could not be processed." }, { status: 400 });
   }

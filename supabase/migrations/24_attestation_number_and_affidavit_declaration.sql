@@ -91,7 +91,7 @@ begin
 
   select * into o from public.application_ownership x where x.application_id = p_app and x.route = 'record_owner';
   if not found or o.name_score is null or o.name_score < 0.5 or o.name_score >= 0.9 then
-    raise exception 'Attestation number verification applies only to recorded-owner name match from 50% to below 90%.' using errcode = 'AP001';
+    raise exception 'Attestation number verification applies only to recorded-owner name match from 50%% to below 90%%.' using errcode = 'AP001';
   end if;
   select * into donor from public.application_parties x where x.application_id = p_app and x.role = 'donor';
   if not found then raise exception 'Verify the donor NID before Attestation lookup.' using errcode = 'AP001'; end if;
@@ -252,7 +252,7 @@ begin
       raise exception 'Record biometric completion first; the original Affidavit declaration is only allowed after the biometric-day check.' using errcode = 'AP001';
     end if;
     if v_name_score is null or v_name_score >= 0.5 then
-      raise exception 'This Affidavit declaration applies only when the recorded-owner name match is below 50%.' using errcode = 'AP001';
+      raise exception 'This Affidavit declaration applies only when the recorded-owner name match is below 50%%.' using errcode = 'AP001';
     end if;
     if v_ownership_verified_at is null or v_donor_verified_at is null then
       raise exception 'Current donor and ownership records must be saved before making this declaration.' using errcode = 'AP001';
@@ -270,7 +270,7 @@ begin
       raise exception 'All 12 Sub-Registrar checklist items must be saved as Correct before approval.' using errcode = 'AP001';
     end if;
     if v_name_score is not null and v_name_score >= 0.5 and v_name_score < 0.9 and not v_attestation_verified then
-      raise exception 'Name match is 50%-89%: the applicant must verify a valid Attestation certificate number against the reference database before approval.' using errcode = 'AP001';
+      raise exception 'Name match is 50%%-89%%: the applicant must verify a valid Attestation certificate number against the reference database before approval.' using errcode = 'AP001';
     end if;
     if v_name_score is not null and v_name_score < 0.5 and not exists (
       select 1 from public.audit_logs l
@@ -282,7 +282,7 @@ begin
         and l.details->>'ownership_verified_version' = to_char(v_ownership_verified_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')
         and l.details->>'donor_verified_version' = to_char(v_donor_verified_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')
     ) then
-      raise exception 'Name match is below 50%: the responsible Sub-Registrar must declare that the original Affidavit was seen and manually verified with the court, accepting responsibility.' using errcode = 'AP001';
+      raise exception 'Name match is below 50%%: the responsible Sub-Registrar must declare that the original Affidavit was seen and manually verified with the court, accepting responsibility.' using errcode = 'AP001';
     end if;
     if exists (
       select 1 from public.application_challans c
@@ -441,7 +441,7 @@ begin
     into v_attestation_verified, v_attestation_no from public.application_identity_evidence e where e.application_id = p_app;
   v_attestation_verified := coalesce(v_attestation_verified, false);
   if v_name_score is not null and v_name_score >= 0.5 and v_name_score < 0.9 and not v_attestation_verified then
-    raise exception 'Name match is 50%-89%: verify the Attestation certificate number against the reference database before registration.' using errcode = 'AP001';
+    raise exception 'Name match is 50%%-89%%: verify the Attestation certificate number against the reference database before registration.' using errcode = 'AP001';
   end if;
   if v_name_score is not null and v_name_score < 0.5 and not exists (
     select 1 from public.audit_logs l
@@ -453,7 +453,7 @@ begin
       and l.details->>'ownership_verified_version' = to_char(v_ownership_verified_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')
       and l.details->>'donor_verified_version' = to_char(v_donor_verified_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')
   ) then
-    raise exception 'Name match is below 50%: the Sub-Registrar must record the original Affidavit and court manual-verification declaration, accepting responsibility, before registration.' using errcode = 'AP001';
+    raise exception 'Name match is below 50%%: the Sub-Registrar must record the original Affidavit and court manual-verification declaration, accepting responsibility, before registration.' using errcode = 'AP001';
   end if;
   if exists (
     select 1 from public.application_challans c

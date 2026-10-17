@@ -4,14 +4,14 @@ import { Field, Select } from "@/components/ui";
 import { callApi } from "./api";
 
 // division > district > upazila > mouza. Emits { division, district, upazila, location_id, mouza } (location_id set when mouza chosen).
-export default function LocationPicker({ onChange, onError }) {
+export default function LocationPicker({ onChange, onError, apiPath = "/api/verify/locations" }) {
   const [sel, setSel] = useState({ division: "", district: "", upazila: "", mouza: "", mouzaId: "" });
   const [opts, setOpts] = useState({ division: [], district: [], upazila: [], mouza: [] });
   const [loading, setLoading] = useState("");
 
   async function load(level, parents) {
     setLoading(level);
-    const r = await callApi("/api/verify/locations", { level, ...parents });
+    const r = await callApi(apiPath, { level, ...parents });
     setLoading("");
     if (r.error) { onError?.(r.error); return; }
     setOpts((o) => ({ ...o, [level]: r.data }));

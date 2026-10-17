@@ -195,7 +195,7 @@ begin
   elsif p_decision = 'verify_attestation' then
     if v_role <> 'sub_registrar' then raise exception 'Only the assigned Sub-Registrar can verify this attestation.' using errcode = '42501'; end if;
     if v_name_score is null or v_name_score < 0.5 or v_name_score >= 0.9 then
-      raise exception 'Attestation verification applies only when the recorded-owner name match is at least 50% and below 90%.' using errcode = 'AP001';
+      raise exception 'Attestation verification applies only when the recorded-owner name match is at least 50%% and below 90%%.' using errcode = 'AP001';
     end if;
     if not exists (select 1 from public.application_documents d where d.application_id = p_app and d.doc_type = 'attestation') then
       raise exception 'Applicant must upload an Attestation document before verification.' using errcode = 'AP001';
@@ -212,7 +212,7 @@ begin
       raise exception 'Record biometric completion first; the original Affidavit must be checked and received on biometric day.' using errcode = 'AP001';
     end if;
     if v_name_score is null or v_name_score >= 0.5 then
-      raise exception 'Affidavit receipt is required in this workflow only when the recorded-owner name match is below 50%.' using errcode = 'AP001';
+      raise exception 'Affidavit receipt is required in this workflow only when the recorded-owner name match is below 50%%.' using errcode = 'AP001';
     end if;
     insert into public.application_identity_evidence(application_id, affidavit_received, affidavit_received_by, affidavit_received_at, affidavit_note, updated_at)
     values (p_app, true, auth.uid(), now(), nullif(left(btrim(coalesce(p_note, '')), 1000), ''), now())
@@ -232,10 +232,10 @@ begin
       raise exception 'All 12 Sub-Registrar checklist items must be saved as Correct before approval.' using errcode = 'AP001';
     end if;
     if v_name_score is not null and v_name_score >= 0.5 and v_name_score < 0.9 and not v_attestation_verified then
-      raise exception 'Name match is 50%-89%: verify the uploaded Attestation before approval.' using errcode = 'AP001';
+      raise exception 'Name match is 50%%-89%%: verify the uploaded Attestation before approval.' using errcode = 'AP001';
     end if;
     if v_name_score is not null and v_name_score < 0.5 and not v_affidavit_received then
-      raise exception 'Name match is below 50%: the Sub-Registrar must record receipt of the original Affidavit on biometric day.' using errcode = 'AP001';
+      raise exception 'Name match is below 50%%: the Sub-Registrar must record receipt of the original Affidavit on biometric day.' using errcode = 'AP001';
     end if;
     if exists (
       select 1 from public.application_challans c
@@ -390,10 +390,10 @@ begin
   v_attestation_verified := coalesce(v_attestation_verified, false);
   v_affidavit_received := coalesce(v_affidavit_received, false);
   if v_name_score is not null and v_name_score >= 0.5 and v_name_score < 0.9 and not v_attestation_verified then
-    raise exception 'Name match is 50%-89%: verify the uploaded Attestation before registration.' using errcode = 'AP001';
+    raise exception 'Name match is 50%%-89%%: verify the uploaded Attestation before registration.' using errcode = 'AP001';
   end if;
   if v_name_score is not null and v_name_score < 0.5 and not v_affidavit_received then
-    raise exception 'Name match is below 50%: the Sub-Registrar must record receipt of the original Affidavit on biometric day.' using errcode = 'AP001';
+    raise exception 'Name match is below 50%%: the Sub-Registrar must record receipt of the original Affidavit on biometric day.' using errcode = 'AP001';
   end if;
   if exists (
     select 1 from public.application_challans c

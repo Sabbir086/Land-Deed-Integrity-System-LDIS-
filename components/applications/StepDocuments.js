@@ -7,6 +7,8 @@ import { DOC_TYPES } from "@/lib/applications/status";
 const OK = ["application/pdf", "image/jpeg", "image/png"]; const MAX = 5 * 1024 * 1024;
 
 export default function StepDocuments({ view, call, busy: parentBusy }) {
+  const nameScore = view.ownership?.route === "record_owner" && view.ownership.name_score != null ? Number(view.ownership.name_score) : null;
+  const attestationRequired = nameScore !== null && nameScore >= 0.5 && nameScore < 0.9;
   const [type, setType] = useState("porcha_copy"); const [file, setFile] = useState(null); const [msg, setMsg] = useState(null); const [up, setUp] = useState(false);
   const busy = parentBusy || up;
 
@@ -35,7 +37,11 @@ export default function StepDocuments({ view, call, busy: parentBusy }) {
   }
   return (
     <div className="space-y-4">
-      <Alert tone="info">সহায়ক নথি ঐচ্ছিক (সর্বোচ্চ ১০টি, প্রতিটি ৫ MB; PDF/JPG/PNG)। নথিগুলো ব্যক্তিগত স্টোরেজে থাকে। সাব-রেজিস্ট্রারের দেখার অনুমতি Stage 3-এ যুক্ত হবে। Optional; reviewer access is a Stage 3 task.</Alert>
+      {attestationRequired ? (
+        <Alert tone="info" title="প্রত্যয়ন নম্বর ধাপ ৩-এ যাচাই করুন">
+          নামের মিল {Math.round(nameScore * 100)}%। প্রত্যয়নপত্রের নম্বর ধাপ ৩ (মালিকানার ভিত্তি)-এ লিখে যাচাই করতে হবে। প্রত্যয়নপত্রের ফাইল upload বাধ্যতামূলক নয়; এই ধাপ সহায়ক নথি আপলোডের জন্য।
+        </Alert>
+      ) : <Alert tone="info">সহায়ক নথি ঐচ্ছিক (সর্বোচ্চ ১০টি, প্রতিটি ৫ MB; PDF/JPG/PNG)। নথিগুলো ব্যক্তিগত স্টোরেজে থাকে। Affidavit upload বা online verification প্রয়োজন নেই।</Alert>}
       <Card title="নথি আপলোড · Upload a document">
         <form onSubmit={upload} className="grid gap-4 sm:grid-cols-[1fr,1fr,auto] sm:items-end">
           <Field label="ধরন · Type" htmlFor="d-type"><Select id="d-type" value={type} onChange={(e) => setType(e.target.value)}>{Object.entries(DOC_TYPES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</Select></Field>

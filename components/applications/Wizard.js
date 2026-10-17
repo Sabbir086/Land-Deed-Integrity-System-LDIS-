@@ -25,7 +25,19 @@ export default function Wizard({ initial }) {
     setBusy(true); setError(null);
     const r = await appCall(action, { app_id: appId, ...body });
     setBusy(false);
-    if (r.error) setError(r.error); else if (r.data?.application) setView(r.data.application);
+    if (r.error) setError(r.error); else if (r.data?.application) {
+      setView(r.data.application);
+      // A very low recorded-owner name match uses an affidavit-at-biometric workflow.
+      // It is instruction-only on the applicant side; the Sub-Registrar records receipt later.
+      if (action === "ownership" && r.data.application.ownership?.route === "record_owner") {
+        const score = r.data.application.ownership?.name_score;
+        if (score !== null && score !== undefined && Number(score) < 0.5) {
+          setStep(4);
+          appCall("progress", { app_id: appId, step: 4 });
+          if (typeof window !== "undefined") window.scrollTo({ top: 0 });
+        }
+      }
+    }
     return r;
   }, [appId]);
 

@@ -20,6 +20,8 @@ export default function LandWorkbench() {
   const [types, setTypes] = useState([]);
   const [type, setType] = useState("");
   const [kno, setKno] = useState("");
+  const [searchBy, setSearchBy] = useState("khatian");
+  const [selectedKhatian, setSelectedKhatian] = useState(null);
   const [owner, setOwner] = useState(null);
   const [dagIds, setDagIds] = useState([]);
   const [nid, setNid] = useState(""); const [dob, setDob] = useState("");
@@ -31,7 +33,7 @@ export default function LandWorkbench() {
   const [hist, runHist, resetHist] = useLookup();
   const [khas, runKhas, resetKhas] = useLookup();
 
-  const found = kh.data?.found ? kh.data : null;
+  const found = selectedKhatian || (kh.data?.found ? kh.data : null);
 
   useEffect(() => {
     setTypes([]); setType("");
@@ -40,26 +42,42 @@ export default function LandWorkbench() {
   }, [loc.location_id]);
 
   function resetAll() { setOwner(null); setDagIds([]); resetId(); resetHist(); resetKhas(); setHistDag(""); }
-  function searchKhatian(e) { e.preventDefault(); resetAll(); runKh("/api/verify/khatian", { location_id: loc.location_id, khatian_type: type, khatian_no: kno }); }
+  function searchKhatian(e) {
+    e.preventDefault();
+    resetAll();
+    setSelectedKhatian(null);
+    if (searchBy === "dag") {
+      runKh("/api/verify/khatian-by-dag", { location_id: loc.location_id, khatian_type: type, dag_no: kno });
+    } else {
+      runKh("/api/verify/khatian", { location_id: loc.location_id, khatian_type: type, khatian_no: kno });
+    }
+  }
 
   const selectedDags = useMemo(() => (found ? found.dags.filter((d) => dagIds.includes(d.id)) : []), [found, dagIds]);
   const toggleDag = (id) => setDagIds((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
 
-  const all = useMemo(() => [kh.data?.indicators, idc.data?.indicators, hist.data?.indicators, khas.data?.indicators].flat().filter(Boolean), [kh.data, idc.data, hist.data, khas.data]);
+  const all = useMemo(() => [selectedKhatian?.indicators || kh.data?.indicators, idc.data?.indicators, hist.data?.indicators, khas.data?.indicators].flat().filter(Boolean), [kh.data, selectedKhatian, idc.data, hist.data, khas.data]);
   const order = { high: 0, medium: 1, unknown: 2, info: 3 };
   const merged = [...all].sort((a, b) => order[a.level] - order[b.level]);
 
   return (
     <div className="space-y-6">
-      <Card title="ধাপ ১ — জমির তফসিল" subtitle="বিভাগ → জেলা → উপজেলা → মৌজা → খতিয়ানের ধরন ও নম্বর">
+      <Card title="ধাপ ১ — জমির তফসিল" subtitle="বিভাগ → জেলা → উপজেলা → মৌজা → খতিয়ানের ধরন → খতিয়ান অথবা দাগ নম্বর">
         <form onSubmit={searchKhatian} className="space-y-4">
           <LocationPicker onChange={setLoc} onError={setLocErr} />
-          <div className="grid gap-4 sm:grid-cols-3 sm:items-end">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
             <Field label="খতিয়ানের ধরন" htmlFor="k-type">
               <Select id="k-type" value={type} onChange={(e) => setType(e.target.value)} disabled={!types.length}><option value="">— নির্বাচন —</option>{types.map((t) => <option key={t}>{t}</option>)}</Select>
             </Field>
-            <Field label="খতিয়ান নম্বর" htmlFor="k-no"><Input id="k-no" inputMode="numeric" value={kno} onChange={(e) => setKno(e.target.value)} /></Field>
-            <Button type="submit" disabled={kh.loading || !loc.location_id || !type || !kno}>পর্চা খুঁজুন</Button>
+            <Field label="কোন নম্বর দিয়ে খুঁজবেন?" htmlFor="search-by">
+              <Select id="search-by" value={searchBy} onChange={(e) => { setSearchBy(e.target.value); setKno(""); setSelectedKhatian(null); resetKh(); resetAll(); }}>
+                <option value="khatian">খতিয়ান নম্বর</option><option value="dag">দাগ নম্বর</option>
+              </Select>
+            </Field>
+            <Field label={searchBy === "dag" ? "দাগ নম্বর" : "খতিয়ান নম্বর"} htmlFor="k-no">
+              <Input id="k-no" inputMode="numeric" value={kno} onChange={(e) => setKno(e.target.value)} />
+            </Field>
+            <Button type="submit" disabled={kh.loading || !loc.location_id || !type || !kno}>রেকর্ড খুঁজুন</Button>
           </div>
           {locErr && <Alert tone="error">{locErr}</Alert>}
           {kh.loading && <Spinner />}
@@ -67,7 +85,21 @@ export default function LandWorkbench() {
       </Card>
 
       {kh.error && <Alert tone="error">{kh.error}</Alert>}
-      {kh.data && !kh.data.found && <Alert tone="warn" title="পর্চা পাওয়া যায়নি">নির্বাচিত মৌজা, ধরন ও নম্বরে সরবরাহকৃত ডেটাবেজে খতিয়ান নেই। এটি প্রমাণ নয় যে খতিয়ান বাস্তবে নেই।</Alert>}
+      {kh.data && !kh.data.found && !kh.data.candidates?.length && <Alert tone="warn" title="পর্চা পাওয়া যায়নি">নির্বাচিত মৌজা, ধরন ও নম্বরে সরবরাহকৃত ডেটাবেজে খতিয়ান/দাগের মিল নেই। এটি প্রমাণ নয় যে বাস্তবে রেকর্ড নেই।</Alert>}
+
+      {kh.data?.candidates?.length > 1 && !selectedKhatian && (
+        <Card title="একই দাগ একাধিক খতিয়ানে পাওয়া গেছে" subtitle="সঠিক খতিয়ানটি নির্বাচন করুন, তারপর মালিক ও দাগের যাচাই চালিয়ে যান।">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {kh.data.candidates.map((candidate) => (
+              <button key={candidate.khatian.id} type="button" onClick={() => { setSelectedKhatian(candidate); setOwner(null); setDagIds([]); resetId(); resetHist(); resetKhas(); setHistDag(""); }} className="rounded-lg border p-4 text-left hover:border-emerald-700 hover:bg-emerald-50">
+                <span className="block font-semibold">খতিয়ান {candidate.khatian.khatian_no} · {candidate.khatian.khatian_type}</span>
+                <span className="mt-1 block text-sm text-slate-600">{candidate.khatian.mouza}, {candidate.khatian.upazila}, {candidate.khatian.district}</span>
+                <span className="mt-1 block text-xs text-slate-500">মালিক: {candidate.owners.length} · দাগ: {candidate.dags.length}</span>
+              </button>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {found && (
         <>
@@ -89,7 +121,7 @@ export default function LandWorkbench() {
                     <td className="px-3 py-2">{owner ? fmtArea(Math.round(d.area * owner.share * 10000) / 10000) : "—"}</td></tr>))}</tbody></table>
             </div>
             <p className="mt-2 text-xs text-slate-500">* অনুমান: প্রাপ্য = দাগের পরিমাণ × মালিকের অংশ (প্রতিটি দাগে একই অংশ ধরে)। এটি এখনো নিশ্চিত নিয়ম নয়।</p>
-            <div className="mt-4"><Indicators items={kh.data.indicators} /></div>
+            <div className="mt-4"><Indicators items={found.indicators || kh.data.indicators} /></div>
           </Card>
 
           <Card title="ধাপ ২ — রেকর্ডীয় মালিক বনাম NID" subtitle="নির্বাচিত মালিকের পর্চা-তথ্য NID রেকর্ডের সঙ্গে তুলনা (প্রস্তাবিত ৯০% নিয়ম)">

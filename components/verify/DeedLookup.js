@@ -34,6 +34,20 @@ export default function DeedLookup() {
                   { key: "reg", label: "নিবন্ধন", render: (r) => `${r.sub_office || "—"} (${fmtDate(r.registered_on)})` },
                   { key: "prev", label: "পূর্ববর্তী দলিল", render: (r) => (r.prev_deed_no ? `${r.prev_deed_no} (${fmtDate(r.prev_deed_date)})` : "—") },
                 ]} />
+              <div className="mt-5 space-y-4">
+                {d.candidates.map((candidate, index) => (
+                  <section key={`${candidate.deed_no}-${candidate.deed_date}-${index}`} className="rounded-lg border border-slate-200 p-3">
+                    <h3 className="font-semibold">দলিল {candidate.deed_no} — অতিরিক্ত তফসিল ও সাক্ষী</h3>
+                    <dl className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
+                      <div><dt className="inline text-slate-500">দাতার পিতার নাম: </dt><dd className="inline">{candidate.donor_father_name || "—"}</dd></div>
+                      <div><dt className="inline text-slate-500">গ্রহীতার পিতার নাম: </dt><dd className="inline">{candidate.donee_father_name || "—"}</dd></div>
+                      <div><dt className="inline text-slate-500">দলিলের মূল্য: </dt><dd className="inline">{candidate.deed_value ? `৳ ${Number(candidate.deed_value).toLocaleString("en-IN")}` : "—"}</dd></div>
+                    </dl>
+                    {!!candidate.parcels?.length && <div className="mt-3 overflow-x-auto"><table className="w-full border-collapse text-sm"><thead><tr className="bg-slate-50"><th className="border p-2 text-left">তফসিল</th><th className="border p-2 text-left">লোকেশন</th><th className="border p-2 text-left">খতিয়ান</th><th className="border p-2 text-left">দাগ</th><th className="border p-2 text-left">শ্রেণি</th><th className="border p-2 text-right">জমি</th></tr></thead><tbody>{candidate.parcels.map((parcel) => <tr key={`${candidate.deed_no}-${parcel.serial}`}><td className="border p-2">{parcel.serial}</td><td className="border p-2">{[parcel.mouza,parcel.upazila,parcel.district].filter(Boolean).join(", ") || "—"}</td><td className="border p-2">{parcel.khatian_type || "—"} · {parcel.khatian_no}</td><td className="border p-2">{parcel.dag_no}</td><td className="border p-2">{parcel.land_class || "—"}</td><td className="border p-2 text-right">{fmtArea(parcel.area)}</td></tr>)}</tbody></table></div>}
+                    {!!candidate.witnesses?.length && <div className="mt-3"><h4 className="text-sm font-semibold">সাক্ষী</h4><ul className="mt-1 grid gap-2 text-sm sm:grid-cols-2">{candidate.witnesses.map((w) => <li key={w.serial} className="rounded bg-slate-50 p-2">{w.serial}. {w.name}{w.father_name ? ` — পিতা: ${w.father_name}` : ""}</li>)}</ul></div>}
+                  </section>
+                ))}
+              </div>
             </Card>
           )}
         </>

@@ -42,6 +42,16 @@ export default function StepPlots({ view, call, busy }) {
   const save = (e) => { e.preventDefault(); call("plots", { plots: chosen.map((id) => ({ dag_id: id, area_sold: sel[id] })) }); };
   return (
     <div className="space-y-4">
+      {view.ownership?.route === "record_owner" && view.ownership.name_score != null && Number(view.ownership.name_score) < 0.5 && (
+        <Alert tone="warn" title="বিশেষ নির্দেশনা: বায়োমেট্রিকের দিন মূল Affidavit আনুন">
+          নামের মিল {Math.round(Number(view.ownership.name_score) * 100)}%। এই ধাপে Affidavit অনলাইনে যাচাই বা আপলোড করতে হবে না। আবেদনকারীকে পরবর্তী ধাপ সম্পন্ন করতে দিন; নিবন্ধনের আগে সাব-রেজিস্ট্রারকে বায়োমেট্রিকের দিন মূল Affidavit গ্রহণের ঘোষণা সংরক্ষণ করতে হবে।
+        </Alert>
+      )}
+      {view.ownership?.route === "record_owner" && view.ownership.name_score != null && Number(view.ownership.name_score) >= 0.5 && Number(view.ownership.name_score) < 0.9 && (
+        <Alert tone="warn" title="প্রত্যয়নপত্রের নম্বর যাচাই করুন">
+          নামের মিল {Math.round(Number(view.ownership.name_score) * 100)}%। ধাপ ৩-এ মালিকানার তথ্যের নিচে প্রত্যয়নপত্র নম্বর দিয়ে verify করুন। ফাইল upload বাধ্যতামূলক নয়।
+        </Alert>
+      )}
       <Card title="দাগ নির্বাচন ও বিক্রির পরিমাণ · Select dags and area" subtitle="এক বা একাধিক দাগ; পরিমাণ শতকে (সর্বোচ্চ ৪ দশমিক)">
         <form onSubmit={save} className="space-y-3">
           {dags.length === 0 && <Alert tone="info">এই খতিয়ানে কোনো দাগ নেই।</Alert>}

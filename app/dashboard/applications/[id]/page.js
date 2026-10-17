@@ -68,7 +68,8 @@ export default async function ApplicationDetail({ params }) {
           <Card title="কার্যক্রম · Actions"><div className="space-y-3">
             {canEdit(a.status) && <Link href={`/dashboard/applications/${a.id}/edit`} className="inline-flex min-h-[40px] items-center rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800">{a.status === "draft" ? "আবেদন চালিয়ে যান" : "সংশোধন করে আবার জমা দিন"}</Link>}
             {canWithdraw(a.status) && <WithdrawButton appId={a.id} />}
-            {!canEdit(a.status) && !canWithdraw(a.status) && <p className="text-sm text-slate-600">এই অবস্থায় কোনো ব্যবহারকারী-কার্যক্রম নেই।</p>}
+            {a.status === "registered" && <Link href={`/registered-deeds/${a.id}/print`} className="inline-flex min-h-[40px] items-center rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white">ডেমো দলিল প্রিন্ট করুন</Link>}
+            {!canEdit(a.status) && !canWithdraw(a.status) && a.status !== "registered" && <p className="text-sm text-slate-600">এই অবস্থায় কোনো ব্যবহারকারী-কার্যক্রম নেই।</p>}
             <Link href="/dashboard/applications" className="block text-sm underline">← সব আবেদন</Link></div></Card>
         </div>
       </div>

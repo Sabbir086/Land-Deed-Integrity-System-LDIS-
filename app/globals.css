@@ -28,11 +28,19 @@ body:has(.ldis-home) .ldis-site-header {
   left: 0;
   width: 100%;
   color: #fff;
-  background: rgba(8, 35, 27, .35);
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .2);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  /* Keep the navigation over the hero image without a separate header strip. */
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Use text shadow instead of a header background for legibility over the photo. */
+body:has(.ldis-home) .ldis-brand-copy,
+body:has(.ldis-home) .ldis-header-nav > a,
+body:has(.ldis-home) .ldis-header-user {
+  text-shadow: 0 2px 7px rgba(0, 0, 0, .82), 0 1px 2px rgba(0, 0, 0, .7);
 }
 
 body:has(.ldis-home) .ldis-header-inner {
@@ -98,7 +106,7 @@ body:has(.ldis-home) .ldis-header-signout button { border-color: rgba(255, 255, 
 .ldis-hero::before {
   background-image: url("/photo/hero.jpg");
   background-repeat: no-repeat;
-  background-position: center 45%;
+  background-position: center 38%;
   background-size: cover;
   transform: scale(1.025);
   animation: ldis-hero-settle 8s ease-out both;
@@ -360,7 +368,7 @@ body:has(.ldis-home) .ldis-footer-inner {
   body:has(.ldis-home) .ldis-header-signout { margin-left: 0; }
   body:has(.ldis-home) .ldis-header-signout button { min-height: 32px; padding: 5px 9px; font-size: 12px; }
   .ldis-hero { min-height: clamp(590px, 88svh, 760px); }
-  .ldis-hero::before { background-position: 58% center; }
+  .ldis-hero::before { background-position: 58% 42%; }
   .ldis-hero::after {
     background:
       linear-gradient(90deg, rgba(5, 31, 23, .88) 0%, rgba(7, 42, 29, .74) 58%, rgba(8, 44, 30, .43) 100%),

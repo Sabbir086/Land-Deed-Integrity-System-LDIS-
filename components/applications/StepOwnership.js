@@ -36,6 +36,9 @@ export default function StepOwnership({ view, call, busy }) {
   const [ownerId, setOwnerId] = useState(cur?.owner_id || "");
   const [cert, setCert] = useState(cur?.warish_cert_no || "");
   const [deedNo, setDeedNo] = useState(cur?.baya_deed_no || ""); const [deedDate, setDeedDate] = useState(cur?.baya_deed_date || "");
+  const [attestationNo, setAttestationNo] = useState(view.identity_evidence?.attestation_no || "");
+  const [attestationBusy, setAttestationBusy] = useState(false);
+  const [attestationMessage, setAttestationMessage] = useState("");
   const donor = (view.parties || []).find((p) => p.role === "donor");
   const owners = view.khatian?.owners || [];
   if (!view.application.khatian_id) return <Alert tone="warn">আগে ধাপ ২-এ খতিয়ান নির্বাচন করুন। Select a khatian in step 2 first.</Alert>;
@@ -43,7 +46,31 @@ export default function StepOwnership({ view, call, busy }) {
 
   const needsOwner = route !== "baya_deed";
   const ready = (needsOwner ? ownerId : true) && (route !== "warish" || cert) && (route !== "baya_deed" || (deedNo && deedDate));
+  const identityEvidence = view.identity_evidence || {};
+  const nameScore = cur?.route === "record_owner" && cur.name_score != null ? Number(cur.name_score) : null;
+  const attestationRequired = nameScore !== null && nameScore >= 0.5 && nameScore < 0.9;
+  const attestationVerified = identityEvidence.attestation_verified === true && identityEvidence.attestation_no === attestationNo.trim();
   function save(e) { e.preventDefault(); call("ownership", { route, owner_id: needsOwner ? ownerId : undefined, cert_no: cert, deed_no: deedNo, deed_date: deedDate }); }
+  async function verifyAttestation() {
+    setAttestationMessage("");
+    setAttestationBusy(true);
+    try {
+      const result = await call("attestation-verify", { attestation_no: attestationNo.trim() });
+      if (result.error) setAttestationMessage(result.error);
+      else {
+        if (result.data?.verified && result.data?.attestation?.attestation_no) {
+          // Use the canonical number returned from the reference record so Bangla digits/case variants
+          // do not make a successful database verification look unverified in the UI.
+          setAttestationNo(result.data.attestation.attestation_no);
+        }
+        setAttestationMessage(result.data?.message || (result.data?.verified ? "প্রত্যয়ন নম্বর যাচাই হয়েছে।" : "প্রত্যয়ন নম্বর যাচাই করা যায়নি।"));
+      }
+    } catch {
+      setAttestationMessage("প্রত্যয়ন যাচাই করা যায়নি। আবার চেষ্টা করুন।");
+    } finally {
+      setAttestationBusy(false);
+    }
+  }
   return (
     <div className="space-y-4">
       <Card title="দাতা কোন সূত্রে জমির মালিক? · How does the donor hold this land?" subtitle={`দাতা: ${donor.name_bn}`}>
@@ -72,6 +99,31 @@ export default function StepOwnership({ view, call, busy }) {
         </form>
       </Card>
       <Result o={cur} />
+      {attestationRequired && (
+        <Card title="প্রত্যয়নপত্র নম্বর দিয়ে যাচাই · Verify attestation by certificate number">
+          <p className="mb-3 text-sm text-slate-600">
+            নামের মিল {Math.round(nameScore * 100)}%। প্রত্যয়নপত্রের নম্বর লিখে reference database-এর সঙ্গে যাচাই করুন। এই কাজের জন্য Affidavit-এর কোনো নম্বর, upload বা online verification নেই।
+          </p>
+          <form onSubmit={(e) => { e.preventDefault(); verifyAttestation(); }} className="space-y-3">
+            <Field label="প্রত্যয়নপত্র নম্বর · Attestation number" htmlFor="owner-attestation-no" hint="প্রত্যয়নপত্রে থাকা নম্বর হুবহু লিখুন।">
+              <Input id="owner-attestation-no" value={attestationNo} onChange={(e) => { setAttestationNo(e.target.value); setAttestationMessage(""); }} maxLength={80} required />
+            </Field>
+            <Button type="submit" disabled={attestationBusy || busy || !attestationNo.trim()}>
+              {attestationBusy ? "যাচাই হচ্ছে…" : "প্রত্যয়ন নম্বর যাচাই করুন · Verify number"}
+            </Button>
+          </form>
+          {attestationVerified && <Alert tone="success" title="প্রত্যয়ন নম্বর যাচাই সফল">
+            নম্বর: <strong>{identityEvidence.attestation_no}</strong>। রেফারেন্স রেকর্ডে এই নম্বর এবং দাতার নাম-ভ্যারিয়েন্টের মিল পাওয়া গেছে। সাব-রেজিস্ট্রার চূড়ান্ত পর্যালোচনা করবেন।
+          </Alert>}
+          {attestationMessage && !attestationVerified && <Alert tone="warn">{attestationMessage}</Alert>}
+          <p className="mt-3 text-xs text-slate-500">এই যাচাই কেবল নম্বর ও সংরক্ষিত নাম-ভ্যারিয়েন্টের মিল নিশ্চিত করে; নিজে থেকে আইনগত মালিকানা প্রতিষ্ঠা করে না।</p>
+        </Card>
+      )}
+      {cur?.route === "record_owner" && cur.name_score != null && Number(cur.name_score) < 0.5 && (
+        <Alert tone="warn" title="নামের মিল ৫০%-এর নিচে: মূল Affidavit দেখাতে হবে">
+          Affidavit-এর কোনো নম্বর, upload, database বা online verification নেই। আবেদনকারী বায়োমেট্রিকের দিন মূল Affidavit দেখাবেন। এরপর সাব-রেজিস্ট্রার মূল কপি দেখে আদালত থেকে manual verification করার ঘোষণা এবং অসঙ্গতির দায় নিজের বলে স্বীকার না করা পর্যন্ত DEMO registration এগোবে না।
+        </Alert>
+      )}
     </div>
   );
 }

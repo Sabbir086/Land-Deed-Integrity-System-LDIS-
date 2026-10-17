@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const forms = {
   echallans: { title: "E-Challan তথ্য", fields: [
-    ["challan_no","E-Challan নম্বর","text",true],["amount","জমার পরিমাণ (টাকা)","number",true],
+    ["amount","জমার পরিমাণ (টাকা)","number",true],
     ["fee_type","কোন খাতে জমা","select",true,["stamp","registration","source_tax","other"]],
     ["paid_on","জমার তারিখ","date",true],["verify_status","যাচাইয়ের অবস্থা","select",true,["verified","invalid","pending"]],
     ["used_in_application_no","সংশ্লিষ্ট আবেদন নম্বর (যদি থাকে)","text",false]
@@ -27,15 +27,15 @@ const forms = {
 };
 
 export default function ManualDataEntry() {
-  const [table,setTable]=useState("echallans"), [values,setValues]=useState({}), [busy,setBusy]=useState(false), [message,setMessage]=useState(""), [error,setError]=useState("");
+  const [table,setTable]=useState("echallans"), [values,setValues]=useState({}), [busy,setBusy]=useState(false), [message,setMessage]=useState(""), [error,setError] = useState(""), [generatedIdentifier,setGeneratedIdentifier]=useState("");
   const current=forms[table];
-  function changeTable(next){setTable(next);setValues({});setMessage("");setError("");}
+  function changeTable(next){setTable(next);setValues({});setMessage("");setError("");setGeneratedIdentifier("");}
   async function submit(e){
-    e.preventDefault();setBusy(true);setError("");setMessage("");
+    e.preventDefault();setBusy(true);setError("");setMessage("");setGeneratedIdentifier("");
     const record={};
     current.fields.forEach(([key,,type])=>{const v=values[key];if(v!==undefined&&v!=="") record[key]=type==="number"?Number(v):v;});
     if(table==="nid_persons"){
-      const nid=String(record.nid_no||"").replace(/\D/g,"");
+      const nid=String(record.nid_no_norm||"").replace(/\D/g,"");
       if(!/^\d{10,17}$/.test(nid)){setError("NID নম্বর ১০ থেকে ১৭ digit হতে হবে।");setBusy(false);return;}
       record.nid_no_norm=nid;
     }
@@ -43,7 +43,7 @@ export default function ManualDataEntry() {
       const res=await fetch("/api/data-entry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({table,record})});
       const data=await res.json();
       if(!res.ok) setError(data.error||"তথ্য যোগ করা যায়নি।");
-      else {setMessage(data.message||"তথ্য যোগ হয়েছে।");setValues({});}
+      else {setMessage(data.message||"তথ্য যোগ হয়েছে।");setGeneratedIdentifier(data.data?.identifier||"");setValues({});}
     }catch{setError("সার্ভারের সঙ্গে যোগাযোগ করা যায়নি।");}
     setBusy(false);
   }
@@ -52,9 +52,10 @@ export default function ManualDataEntry() {
     <section className="rounded-2xl border bg-white p-5 shadow-sm">
       <label className="mb-2 block text-sm font-semibold">কোন ধরনের তথ্য যোগ করবেন?</label>
       <select className="w-full rounded-lg border p-3" value={table} onChange={e=>changeTable(e.target.value)}>{Object.entries(forms).map(([key,f])=><option key={key} value={key}>{f.title}</option>)}</select>
-      {message&&<p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-green-800">{message}</p>}
+      {message&&<p role="status" className="mt-4 rounded-lg bg-green-50 p-3 text-green-800">{message}{generatedIdentifier&&<span className="mt-1 block font-mono font-bold">তৈরি হওয়া নম্বর: {generatedIdentifier}</span>}</p>}
       {error&&<p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-red-800">{error}</p>}
       <form onSubmit={submit} className="mt-5 grid gap-4 sm:grid-cols-2">
+        {table==="echallans"&&<div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm sm:col-span-2">চালান নম্বর operator লিখবেন না। Save করার সময় database স্বয়ংক্রিয়ভাবে <span className="font-mono font-semibold">2627-10001</span> format-এ পরবর্তী নম্বর তৈরি করবে।</div>}
         {current.fields.map(([key,label,type,required,options])=><div key={key}>
           <label className="mb-1 block text-sm font-medium">{label}{required?" *":""}</label>
           {type==="select"?<select required={required} value={values[key]||""} onChange={e=>setValues(v=>({...v,[key]:e.target.value}))} className="w-full rounded-lg border p-3"><option value="">নির্বাচন করুন</option>{options.map(o=><option key={o} value={o}>{o}</option>)}</select>:

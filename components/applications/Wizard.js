@@ -7,6 +7,7 @@ import StatusBadge from "./StatusBadge";
 import { appCall } from "./api";
 import { STEPS, LAST_STEP, maxReachableStep, stepDone } from "@/lib/applications/steps";
 import { sortIndicators } from "@/lib/verify/risk";
+import DeedNatureGate from "./DeedNatureGate";
 import StepParties from "./StepParties"; import StepLand from "./StepLand"; import StepOwnership from "./StepOwnership";
 import StepPlots from "./StepPlots"; import StepDetails from "./StepDetails"; import StepFees from "./StepFees";
 import StepDocuments from "./StepDocuments"; import StepAppointment from "./StepAppointment"; import StepReview from "./StepReview";
@@ -36,6 +37,10 @@ export default function Wizard({ initial }) {
   }
   const Body = BODY[step];
   const flags = sortIndicators(view.application.flags || []);
+  if (!view.application.deed_nature) {
+    return <DeedNatureGate applicationNo={view.application.application_no} busy={busy}
+      onSave={(deed_nature, deed_date) => call("nature", { deed_nature, deed_date })} />;
+  }
   return (
     <div className="grid gap-6 lg:grid-cols-[16rem,1fr]">
       <aside className="space-y-4">

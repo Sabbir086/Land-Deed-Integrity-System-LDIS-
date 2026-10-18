@@ -1093,3 +1093,99 @@ body:has(.ldis-data-entry-dashboard) {
   .ldis-process-ripple { top: 49px; height: 22px; }
   .ldis-process-label { margin-top: 9px; font-size: 13px; }
 }
+
+
+/* Compact, consistent auth experience shared by login and registration. */
+body:has(.ldis-auth-screen) .ldis-auth-panel {
+  width: min(100%, 440px);
+}
+body:has(.ldis-auth-screen) .ldis-login-card > header {
+  gap: 6px;
+  padding: 18px 24px 12px !important;
+}
+body:has(.ldis-auth-screen) .ldis-login-card > header::before {
+  width: 46px;
+  height: 46px;
+  font-size: 24px;
+}
+body:has(.ldis-auth-screen) .ldis-login-card > header h2 {
+  font-size: 1.55rem !important;
+}
+body:has(.ldis-auth-screen) .ldis-login-card > div {
+  padding: 17px 24px 20px !important;
+}
+body:has(.ldis-auth-screen) .ldis-login-card input {
+  min-height: 43px;
+}
+body:has(.ldis-auth-screen) .ldis-login-card form.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: .72rem;
+}
+body:has(.ldis-auth-screen) .ldis-login-card form > button[type="submit"] {
+  min-height: 44px !important;
+}
+body:has(.ldis-auth-screen) .ldis-login-extras {
+  gap: 10px;
+  margin-top: 14px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-login {
+  padding: 11px 12px;
+  border-radius: 11px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-login h3 {
+  font-size: 13px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-credentials {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 7px;
+  margin-top: 9px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-credential {
+  min-width: 0;
+  gap: 5px;
+  padding: 7px 8px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-credential span {
+  flex: 0 0 auto;
+  font-size: 10px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-credential code {
+  min-width: 0;
+  font-size: 10px;
+  text-align: right;
+}
+body:has(.ldis-auth-screen) .ldis-demo-action {
+  min-height: 34px !important;
+  margin-top: 8px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-size: 12px;
+}
+body:has(.ldis-auth-screen) .ldis-demo-login > p.mt-2 {
+  margin-top: 6px !important;
+  font-size: 10px;
+  line-height: 1.5;
+}
+body:has(.ldis-signup-screen) .ldis-signup-card > header::before {
+  content: "+";
+}
+.ldis-signup-login-prompt {
+  margin-top: 13px;
+}
+.ldis-signup-notice > div {
+  margin-top: 12px;
+  padding: 9px 11px;
+  border-color: #cfe2d4;
+  border-radius: 9px;
+  background: #f1f8f2;
+  color: #305641;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+@media (max-width: 480px) {
+  body:has(.ldis-auth-screen) .ldis-auth-panel { width: min(100%, 400px); }
+  body:has(.ldis-auth-screen) .ldis-login-card > header { padding: 17px 18px 12px !important; }
+  body:has(.ldis-auth-screen) .ldis-login-card > div { padding: 16px 17px 18px !important; }
+  body:has(.ldis-auth-screen) .ldis-demo-credentials { grid-template-columns: minmax(0, 1fr); }
+  body:has(.ldis-auth-screen) .ldis-demo-credential code { font-size: 11px; }
+}

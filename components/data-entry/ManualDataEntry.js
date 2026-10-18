@@ -181,7 +181,7 @@ export default function ManualDataEntry() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 p-4 sm:p-8">
+    <main className="ldis-role-dashboard ldis-data-entry-dashboard mx-auto max-w-5xl space-y-6 p-4 sm:p-8">
       <header className="rounded-2xl bg-slate-950 p-6 text-white">
         <p className="text-xs font-bold tracking-widest text-cyan-300">LDIS · DATA ENTRY</p>
         <h1 className="mt-2 text-2xl font-bold">Manual Data Entry Operator</h1>

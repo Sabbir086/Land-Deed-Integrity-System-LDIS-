@@ -9,9 +9,9 @@ export default function IdentityFields({ nid, dob, onNid, onDob, idPrefix = "p",
     <Field label="NID নম্বর · NID number" htmlFor={`${idPrefix}-nid`} hint="১০–১৭ সংখ্যা (বাংলা বা ইংরেজি)">
       <Input id={`${idPrefix}-nid`} inputMode="numeric" autoComplete="off" value={nid} onChange={(e) => onNid(e.target.value)} />
     </Field>
-    <Field label="জন্মতারিখ · Date of birth" htmlFor={`${idPrefix}-dob`} hint={dateFormat === "dmy" ? "ক্যালেন্ডার থেকে তারিখ নির্বাচন করুন (DD/MM/YYYY)" : undefined}>
+    <Field label="জন্মতারিখ · Date of birth" htmlFor={`${idPrefix}-dob`} hint={dateFormat === "dmy" ? "ক্যালেন্ডার থেকে জন্মতারিখ নির্বাচন করুন" : undefined}>
       <Input id={`${idPrefix}-dob`} type="date" autoComplete="bday"
-        value={dob && /^\\d{4}-\\d{2}-\\d{2}$/.test(dob) ? dob : ""}
+        value={dob && /^\d{4}-\d{2}-\d{2}$/.test(dob) ? dob : ""}
         onChange={(e) => onDob(e.target.value)} />
     </Field>
   </div>;

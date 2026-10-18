@@ -1524,7 +1524,7 @@ body:has(.ldis-wizard) main#main.container-page {
   .ldis-wizard-summary { display: none; }
 }
 @media (min-width: 641px) {
-  body:has(.ldis-demo-login) .ldis-auth-panel { width: min(100%, 650px); }
+  body:has(.ldis-demo-login) .ldis-auth-panel { box-sizing: border-box; width: min(100%, 580px); }
   body:has(.ldis-demo-login) .ldis-login-card > div { padding: 18px 22px 20px !important; }
   body:has(.ldis-demo-login) .ldis-login-card > div > form { width: min(100%, 480px); margin-inline: auto; }
   body:has(.ldis-demo-login) .ldis-login-extras { margin-top: 13px; }

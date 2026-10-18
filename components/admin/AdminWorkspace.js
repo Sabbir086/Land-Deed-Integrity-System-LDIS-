@@ -17,7 +17,7 @@ const services = [
 export default function AdminWorkspace({ data, error, applications = [], queueError = false, isSuperAdmin = false }) {
   const [active, setActive] = useState("");
   const counts = data?.status_counts || {};
-  return <div className="space-y-6">
+  return <div className="ldis-role-dashboard ldis-admin-dashboard space-y-6">
     <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 p-6 text-white shadow-xl sm:p-8">
       <p className="text-xs font-bold tracking-[.2em] text-cyan-300">LDIS · ADMINISTRATION</p>
       <h1 className="mt-3 text-2xl font-bold sm:text-3xl">Admin Dashboard</h1>

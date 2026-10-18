@@ -747,3 +747,349 @@ body:has(.ldis-auth-screen) .ldis-footer-inner { padding-top: 13px; padding-bott
 @media (prefers-reduced-motion: reduce) {
   #main > :not(.ldis-home), .ldis-auth-panel { animation: none !important; }
 }
+
+/* --------------------------------------------------------------------------
+   Refined landing hero, auth header, and role-specific page backdrops.
+   Presentation-only rules: routes, forms, state and server logic are unchanged.
+   -------------------------------------------------------------------------- */
+
+/* Match the approved hero mockup: boxed Login, plain Registration. */
+body:has(.ldis-home) .ldis-header-nav > .ldis-header-link[href="/login"],
+body:has(.ldis-auth-screen) .ldis-header-nav > .ldis-header-link[href="/login"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 15px;
+  border-radius: 9px !important;
+  color: #123f2e !important;
+  background: #fbf5e9 !important;
+  font-weight: 800;
+  box-shadow: 0 5px 15px rgba(5, 31, 22, .12);
+}
+body:has(.ldis-home) .ldis-header-nav > .ldis-header-link[href="/login"]:hover,
+body:has(.ldis-auth-screen) .ldis-header-nav > .ldis-header-link[href="/login"]:hover {
+  color: #082b1f !important;
+  background: #fffdf8 !important;
+}
+body:has(.ldis-home) .ldis-header-nav > .ldis-header-signup,
+body:has(.ldis-auth-screen) .ldis-header-nav > .ldis-header-signup {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  color: rgba(255, 255, 255, .96) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-weight: 600;
+}
+body:has(.ldis-home) .ldis-header-nav > .ldis-header-signup:hover,
+body:has(.ldis-auth-screen) .ldis-header-nav > .ldis-header-signup:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .12) !important;
+}
+
+/* On the login page, retain the same logo and links but remove the full-width
+   green/red header strip so the navigation sits directly on the hero photo. */
+body:has(.ldis-auth-screen) .ldis-site-header {
+  position: absolute;
+  z-index: 40;
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  color: #fff;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body:has(.ldis-auth-screen) .ldis-header-inner {
+  max-width: 1152px;
+  min-height: 82px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+body:has(.ldis-auth-screen) .ldis-brand-copy,
+body:has(.ldis-auth-screen) .ldis-header-nav > a {
+  text-shadow: none !important;
+}
+body:has(.ldis-auth-screen) .ldis-header-nav { gap: 4px; }
+body:has(.ldis-auth-screen) .ldis-auth-screen {
+  min-height: max(640px, calc(100svh - 46px));
+  padding-top: 105px;
+}
+
+/* Approved first-screen wording and balanced center-left placement. */
+.ldis-hero-inner {
+  align-items: center;
+  padding: 100px 32px 145px;
+}
+.ldis-hero-copy { max-width: 710px; }
+.ldis-hero-eyebrow {
+  margin-bottom: 17px;
+  color: #f1b06e;
+  font-size: 14px;
+}
+.ldis-hero h1 {
+  max-width: 710px;
+  font-size: clamp(2.45rem, 4.15vw, 4.2rem);
+  line-height: 1.2;
+  letter-spacing: -.04em;
+}
+.ldis-hero h1 span { color: #fff; }
+.ldis-hero-description {
+  max-width: 650px;
+  margin-top: 20px;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.85;
+}
+.ldis-hero-english { margin-top: 9px; }
+.ldis-hero-actions { gap: 13px; margin-top: 26px; }
+.ldis-button-primary {
+  color: #123f2e;
+  background: #fbf5e9;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .17);
+}
+.ldis-button-primary:hover { background: #fffdf8; }
+.ldis-button-secondary {
+  border-color: rgba(255, 255, 255, .82);
+  background: rgba(5, 35, 25, .25);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.ldis-button-secondary:hover { background: rgba(255, 255, 255, .12); }
+.ldis-hero-note {
+  gap: 9px;
+  margin-top: 20px;
+  color: rgba(255, 255, 255, .78);
+  font-size: 12px;
+}
+.ldis-hero-note svg {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+  fill: none;
+  stroke: #f1b06e;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ldis-hero-note > span[aria-hidden="true"] { color: #f1b06e; }
+
+/* Three-stage deed-registration flow: lowered to hover over the pond. */
+.ldis-process-flow {
+  position: absolute;
+  z-index: 3;
+  right: max(calc(50vw - 640px), 28px);
+  bottom: clamp(72px, 8.6vh, 88px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: min(500px, 42vw);
+  min-height: 112px;
+  padding: 0 3px;
+  color: #fff;
+  animation: ldis-fade-in 850ms 650ms both;
+}
+.ldis-process-track {
+  position: absolute;
+  z-index: 0;
+  top: 31px;
+  right: 16.5%;
+  left: 16.5%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(245, 174, 102, .35), #edac68 20%, #f7c17c 80%, rgba(245, 174, 102, .35));
+  box-shadow: 0 0 13px rgba(242, 174, 103, .32);
+}
+.ldis-process-track span {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(255, 226, 177, .85);
+  border-radius: 50%;
+  background: #f2ad68;
+  box-shadow: 0 0 12px rgba(255, 185, 109, .72);
+  transform: translate(-50%, -50%);
+}
+.ldis-process-track span:first-child { left: 25%; }
+.ldis-process-track span:last-child { left: 75%; }
+.ldis-process-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 32%;
+  min-height: 112px;
+  flex-direction: column;
+  align-items: center;
+  animation: ldis-process-float 4.6s ease-in-out infinite;
+}
+.ldis-process-step-2 { animation-delay: -.9s; }
+.ldis-process-step-3 { animation-delay: -1.8s; }
+.ldis-process-icon {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 62px;
+  height: 62px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .82);
+  border-radius: 50%;
+  color: #fffdf6;
+  background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, .19), rgba(10, 47, 35, .56) 76%);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, .035), 0 10px 26px rgba(0, 0, 0, .2), inset 0 0 18px rgba(255, 255, 255, .08);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+.ldis-process-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ldis-process-number {
+  position: absolute;
+  z-index: 3;
+  top: 51px;
+  display: flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(6, 38, 27, .82);
+  border-radius: 50%;
+  color: #133b2b;
+  background: #f2ad68;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+.ldis-process-label {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  color: #fffdf8;
+  font-size: 15px;
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, .72);
+}
+.ldis-process-ripple {
+  position: absolute;
+  z-index: 0;
+  top: 59px;
+  width: min(145px, 100%);
+  height: 28px;
+  border: 1px solid rgba(249, 184, 115, .48);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(244, 173, 100, .12), inset 0 0 8px rgba(255, 255, 255, .04);
+  pointer-events: none;
+  animation: ldis-water-ripple 3.4s ease-out infinite;
+}
+.ldis-process-step-2 .ldis-process-ripple { animation-delay: -.9s; }
+.ldis-process-step-3 .ldis-process-ripple { animation-delay: -1.8s; }
+@keyframes ldis-process-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes ldis-water-ripple {
+  0%, 100% { opacity: .3; transform: scaleX(.78) scaleY(.8); }
+  50% { opacity: .8; transform: scaleX(1) scaleY(1); }
+}
+
+/* Soft, color-matched photo backdrops for the four role workspaces. */
+body:has(.ldis-role-dashboard) {
+  background-color: #edf4ef;
+  background-image:
+    radial-gradient(ellipse at 88% 4%, rgba(23, 105, 71, .08), transparent 32rem),
+    linear-gradient(135deg, rgba(239, 247, 241, .89), rgba(229, 240, 232, .86)),
+    url("/photo/hero.jpg");
+  background-position: center top, center top, center 42%;
+  background-size: cover, cover, cover;
+  background-attachment: fixed;
+}
+body:has(.ldis-user-dashboard) {
+  background-image:
+    radial-gradient(ellipse at 90% 3%, rgba(14, 116, 86, .1), transparent 31rem),
+    linear-gradient(135deg, rgba(235, 246, 239, .89), rgba(229, 241, 234, .86)),
+    url("/photo/hero.jpg");
+}
+body:has(.ldis-subregistrar-dashboard) {
+  background-image:
+    radial-gradient(ellipse at 90% 3%, rgba(13, 148, 136, .1), transparent 31rem),
+    linear-gradient(135deg, rgba(231, 246, 243, .89), rgba(226, 240, 237, .86)),
+    url("/photo/hero.jpg");
+}
+body:has(.ldis-admin-dashboard) {
+  background-image:
+    radial-gradient(ellipse at 90% 3%, rgba(79, 70, 229, .075), transparent 31rem),
+    linear-gradient(135deg, rgba(237, 241, 250, .9), rgba(230, 238, 246, .87)),
+    url("/photo/hero.jpg");
+}
+body:has(.ldis-data-entry-dashboard) {
+  background-image:
+    radial-gradient(ellipse at 90% 3%, rgba(180, 120, 42, .075), transparent 31rem),
+    linear-gradient(135deg, rgba(248, 245, 235, .91), rgba(234, 242, 232, .87)),
+    url("/photo/hero.jpg");
+}
+
+@media (max-width: 900px) {
+  .ldis-hero-inner { padding: 104px 28px 172px; }
+  .ldis-hero-copy { max-width: min(680px, 100%); }
+  .ldis-hero h1 { font-size: clamp(2.25rem, 5.1vw, 3.5rem); }
+  .ldis-process-flow {
+    right: 26px;
+    bottom: 28px;
+    width: min(460px, 52vw);
+  }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .ldis-hero { min-height: max(100svh, 760px); }
+  .ldis-hero-inner { min-height: max(100svh, 760px); }
+}
+@media (max-width: 640px) {
+  body:has(.ldis-auth-screen) .ldis-header-inner {
+    align-items: center;
+    flex-direction: row;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  body:has(.ldis-auth-screen) .ldis-brand-mark { width: 36px; height: 36px; flex-basis: 36px; }
+  body:has(.ldis-auth-screen) .ldis-brand-copy > span:first-child { font-size: 12px; }
+  body:has(.ldis-auth-screen) .ldis-brand-copy > span:last-child { font-size: 9px; }
+  body:has(.ldis-auth-screen) .ldis-header-nav { gap: 1px; }
+  body:has(.ldis-auth-screen) .ldis-header-nav > .ldis-header-link[href="/login"],
+  body:has(.ldis-auth-screen) .ldis-header-nav > .ldis-header-signup { min-height: 33px; padding: 6px 8px; font-size: 11px; }
+  body:has(.ldis-auth-screen) .ldis-auth-screen { padding-top: 112px; }
+  .ldis-hero { min-height: max(100svh, 840px); }
+  .ldis-hero::before { background-position: 58% 34%; }
+  .ldis-hero-inner {
+    align-items: flex-start;
+    min-height: max(100svh, 840px);
+    padding: 132px 20px 225px;
+  }
+  .ldis-hero-copy { max-width: 100%; }
+  .ldis-hero-eyebrow { margin-bottom: 14px; font-size: 11px; }
+  .ldis-hero h1 { max-width: 540px; font-size: clamp(2rem, 8.2vw, 2.75rem); line-height: 1.27; }
+  .ldis-hero-description { margin-top: 15px; font-size: 14px; line-height: 1.85; }
+  .ldis-hero-english { font-size: 12px; }
+  .ldis-hero-actions { display: grid; grid-template-columns: 1fr; align-items: stretch; gap: 9px; margin-top: 20px; }
+  .ldis-button { width: 100%; min-height: 45px; }
+  .ldis-hero-note { align-items: center; margin-top: 16px; font-size: 11px; line-height: 1.7; }
+  .ldis-process-flow { right: 16px; bottom: 22px; left: 16px; width: auto; min-height: 100px; }
+  .ldis-process-step { min-height: 100px; }
+  .ldis-process-icon { width: 52px; height: 52px; }
+  .ldis-process-icon svg { width: 24px; height: 24px; }
+  .ldis-process-track { top: 26px; }
+  .ldis-process-number { top: 42px; width: 23px; height: 23px; font-size: 11px; }
+  .ldis-process-ripple { top: 49px; height: 22px; }
+  .ldis-process-label { margin-top: 9px; font-size: 13px; }
+}

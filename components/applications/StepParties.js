@@ -54,7 +54,7 @@ export default function StepParties({ view, call, busy }) {
   function addDonee(){ const role=nextRole(); if(role && !extraRoles.includes(role)) setExtraRoles(v=>[...v,role]); }
   return <div className="space-y-4">
     <Alert tone="info">দাতা ও সকল গ্রহীতার NID এবং জন্মতারিখ DD/MM/YYYY ফরম্যাটে দিন। পূর্ণ NID নম্বর আবেদনে সংরক্ষণ করা হয় না।</Alert>
-    <div className="grid gap-4 lg:grid-cols-2"><PartyCard role="donor" title="দাতা (বিক্রেতা)" party={donor} call={call} busy={busy}/></div>
+    <div className="grid gap-4"><PartyCard role="donor" title="দাতা (বিক্রেতা)" party={donor} call={call} busy={busy}/></div>
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="text-lg font-bold text-slate-900">গ্রহীতা (ক্রেতা)</h3><p className="text-sm text-slate-500">একাধিক গ্রহীতা যোগ করে প্রত্যেকের পরিচয় যাচাই করতে পারবেন।</p></div><Button type="button" variant="secondary" onClick={addDonee} disabled={busy || donees.length+extraRoles.filter(r=>!donees.some(p=>p.role===r)).length>=10 || !nextRole()}>+ গ্রহীতা যোগ করুন</Button></div>
       <div className="grid gap-4 lg:grid-cols-2">

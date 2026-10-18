@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { ACTIONS, areaValue, moneyValue } from "../lib/applications/schemas.js";
 import { STATUS, canEdit, canWithdraw, canChangeAppointment, statusMeta } from "../lib/applications/status.js";
-import { stepDone, maxReachableStep, stepsNeedingAttention, STEPS } from "../lib/applications/steps.js";
+import { stepDone, maxReachableStep, stepsNeedingAttention, STEPS, needsAttestation } from "../lib/applications/steps.js";
 
 const U = "11111111-2222-4333-8444-555555555555";
 const throws = (fn, re) => assert.throws(fn, re);
@@ -46,6 +46,19 @@ test("status rules for users", () => {
   assert.equal(statusMeta("weird").en, "weird");
 });
 const base = () => ({ application: { khatian_id: null, sale_price: null, blockers: [] }, parties: [], ownership: null, plots: [], fee_items: [], challans: [], appointment: null });
+test("attestation gate applies to a mid-range father-name match as well", () => {
+  const v = base();
+  v.parties = [{ role: "donor" }, { role: "donee" }];
+  v.application.khatian_id = "k";
+  v.ownership = { route: "record_owner", status: "review", name_score: 0.96, father_score: 0.68 };
+  assert.equal(needsAttestation(v), true);
+  assert.equal(stepDone(v, 3), false);
+  assert.equal(maxReachableStep(v), 3);
+  v.identity_evidence = { attestation_verified: true };
+  assert.equal(stepDone(v, 3), true);
+  assert.equal(maxReachableStep(v), 4); // the ownership step unlocks; plots are the next incomplete step
+});
+
 test("step completion and navigation gating", () => {
   const v = base(); assert.equal(maxReachableStep(v), 1);
   v.parties = [{}, {}]; assert.equal(stepDone(v, 1), true); assert.equal(maxReachableStep(v), 2);

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRegistrarChecklist } from "./RegistrarChecklist";
+import { isAttestationScore } from "@/lib/applications/steps";
 
 function ActionButton({ children, onClick, disabled, tone = "neutral" }) {
   const styles = {
@@ -11,13 +12,13 @@ function ActionButton({ children, onClick, disabled, tone = "neutral" }) {
     red: "border border-red-300 bg-white text-red-700 hover:bg-red-50",
     neutral: "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50",
   };
-  return <button type="button" disabled={disabled} onClick={onClick} className={`rounded-lg px-3 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-45 ${styles[tone]}`}>{children}</button>;
+  return <button type="button" disabled={disabled} onClick={onClick} className={`ldis-staff-action-button rounded-lg px-3 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-45 ${styles[tone]}`}>{children}</button>;
 }
 
 function WorkflowStep({ number, title, description, children, done = false }) {
-  return <section className={`rounded-lg border p-3 ${done ? "border-emerald-200 bg-emerald-50/50" : "border-slate-200 bg-white"}`}>
-    <div className="flex items-start gap-3">
-      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold ${done ? "bg-emerald-700 text-white" : "bg-slate-200 text-slate-800"}`}>{done ? "✓" : number}</span>
+  return <section className={`ldis-staff-workflow-step ${done ? "is-done" : ""}`}>
+    <div className="ldis-staff-workflow-step-inner">
+      <span className="ldis-staff-workflow-index">{done ? "✓" : number}</span>
       <div className="min-w-0 flex-1">
         <h4 className="font-semibold">{title}</h4>
         <p className="mt-1 text-sm text-slate-600">{description}</p>
@@ -45,7 +46,8 @@ export default function StaffActions({
   const [affidavitDeclarationConfirmed, setAffidavitDeclarationConfirmed] = useState(false);
 
   const nameScore = ownership?.route === "record_owner" && ownership.name_score != null ? Number(ownership.name_score) : null;
-  const attestationRequired = nameScore !== null && nameScore >= 0.5 && nameScore < 0.9;
+  const fatherScore = ownership?.route === "record_owner" && ownership.father_score != null ? Number(ownership.father_score) : null;
+  const attestationRequired = isAttestationScore(nameScore) || isAttestationScore(fatherScore);
   const affidavitRequired = nameScore !== null && nameScore < 0.5;
   const bookedAppointment = appointments.some((x) => ["booked", "rescheduled"].includes(x.status));
   const confirmedAppointment = appointments.some((x) => ["confirmed", "completed"].includes(x.status));
@@ -61,7 +63,7 @@ export default function StaffActions({
   const finalizationReady = status === "under_review" && !governmentInterest && registrarApproved && checklist.ready && blockers.length === 0 && biometricComplete &&
     (!attestationRequired || attestationVerified) && (!affidavitRequired || affidavitDeclared);
   const hasIdentityException = attestationRequired || affidavitRequired;
-  const identityEvidenceReady = !hasIdentityException || (attestationRequired ? attestationVerified : affidavitDeclared);
+  const identityEvidenceReady = (!attestationRequired || attestationVerified) && (!affidavitRequired || affidavitDeclared);
   const appointmentStep = 3;
   const identityStep = 4;
   const approvalStep = 5;
@@ -117,8 +119,8 @@ export default function StaffActions({
     </div>;
   }
 
-  return <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-    <div>
+  return <div className="ldis-staff-registration space-y-4 rounded-xl border p-4">
+    <div className="ldis-staff-registration-heading">
       <h3 className="text-xl font-bold">সাব-রেজিস্ট্রারের সিদ্ধান্ত ও নিবন্ধন ধাপ</h3>
       <p className="mt-1 text-sm text-slate-600">নিচের ধাপগুলো ক্রমানুসারে সম্পন্ন করুন। “Approve” এবং “Finalize” আলাদা সিদ্ধান্ত; আগে অনুমোদন রেকর্ড না করলে নিবন্ধন সম্পন্ন হবে না।</p>
     </div>
@@ -155,9 +157,9 @@ export default function StaffActions({
           {!bookedAppointment && !confirmedAppointment && !biometricComplete && <span className="text-sm text-amber-800">সিস্টেমে বুক করা অ্যাপয়েন্টমেন্ট পাওয়া যায়নি।</span>}
         </WorkflowStep>
 
-        <WorkflowStep number={identityStep} title={attestationRequired ? "প্রত্যয়ন নম্বরের ফলাফল" : affidavitRequired ? "সাব-রেজিস্ট্রারের Affidavit ঘোষণা" : "পরিচয়-সংক্রান্ত অতিরিক্ত শর্ত"} description={attestationRequired ? `নামের মিল ${Math.round(nameScore * 100)}%। আবেদনকারী ধাপ ৩-এ প্রত্যয়নপত্র নম্বর দিয়ে reference database-এ যাচাই করেছেন কি না দেখুন।` : affidavitRequired ? `নামের মিল ${Math.round(nameScore * 100)}%। Affidavit-এর কোনো database, upload বা online verification নেই। বায়োমেট্রিকের পরে সাব-রেজিস্ট্রার নিজে মূল Affidavit ও আদালতের manual verification সম্পর্কে দায়-স্বীকার ঘোষণা দেবেন।` : "এই আবেদনে অতিরিক্ত প্রত্যয়ন বা Affidavit শর্ত প্রযোজ্য নয়."} done={identityEvidenceReady}>
+        <WorkflowStep number={identityStep} title={attestationRequired ? "প্রত্যয়ন নম্বরের ফলাফল" : affidavitRequired ? "সাব-রেজিস্ট্রারের Affidavit ঘোষণা" : "পরিচয়-সংক্রান্ত অতিরিক্ত শর্ত"} description={attestationRequired ? `নামের মিল ${nameScore === null ? "—" : `${Math.round(nameScore * 100)}%`}, পিতার নামের মিল ${fatherScore === null ? "—" : `${Math.round(fatherScore * 100)}%`}। আবেদনকারী ধাপ ৩-এ প্রত্যয়নপত্র নম্বর দিয়ে reference database-এ যাচাই করেছেন কি না দেখুন।` : affidavitRequired ? `নামের মিল ${Math.round(nameScore * 100)}%। Affidavit-এর কোনো database, upload বা online verification নেই। বায়োমেট্রিকের পরে সাব-রেজিস্ট্রার নিজে মূল Affidavit ও আদালতের manual verification সম্পর্কে দায়-স্বীকার ঘোষণা দেবেন।` : "এই আবেদনে অতিরিক্ত প্রত্যয়ন বা Affidavit শর্ত প্রযোজ্য নয়."} done={identityEvidenceReady}>
           {attestationRequired && attestationVerified && <div className="w-full rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">আবেদনকারীর প্রত্যয়ন নম্বর যাচাই সফল: <strong>{attestationNo || "নম্বর সংরক্ষিত"}</strong>। Sub-Registrar চূড়ান্তভাবে পর্যালোচনা করবেন।</div>}
-          {attestationRequired && !attestationVerified && <div className="w-full rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">প্রত্যয়ন নম্বর যাচাই পাওয়া যায়নি। আবেদনকারীকে ধাপ ৩-এ নম্বর দিয়ে verify করতে বলুন; ফাইল upload বাধ্যতামূলক নয়।</div>}
+          {attestationRequired && !attestationVerified && <div className="ldis-staff-review-note w-full rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">নামের মিল {nameScore === null ? "—" : `${Math.round(nameScore * 100)}%`} / পিতার নামের মিল {fatherScore === null ? "—" : `${Math.round(fatherScore * 100)}%`}। প্রত্যয়ন নম্বর যাচাই পাওয়া যায়নি। আবেদনকারীকে ধাপ ৩-এ নম্বর দিয়ে verify করতে বলুন; ফাইল upload বাধ্যতামূলক নয়।</div>}
           {affidavitRequired && !biometricComplete && <p className="w-full text-sm text-amber-800">প্রথমে Appointment ও biometric completed করুন; তার পরেই এই declaration দেওয়া যাবে।</p>}
           {affidavitRequired && !affidavitDeclared && biometricComplete && <div className="w-full space-y-3 rounded-lg border border-amber-300 bg-amber-50 p-3">
             <p className="text-sm font-semibold text-amber-950">দায়-স্বীকার ঘোষণা (শুধু দায়িত্বপ্রাপ্ত সাব-রেজিস্ট্রার)</p>

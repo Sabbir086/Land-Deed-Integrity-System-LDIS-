@@ -127,8 +127,8 @@ body:has(.ldis-home) .ldis-header-signout button { border-color: rgba(255, 255, 
   min-height: 100vh;
   min-height: 100svh;
   margin-inline: auto;
-  /* Keep the copy near the top, directly below the existing overlaid navigation. */
-  padding: 140px 24px 58px;
+  /* Lower the copy into the visual center-left, while keeping the header clear. */
+  padding: clamp(168px, 20.5vh, 218px) 24px 64px;
 }
 .ldis-hero-copy { max-width: 690px; }
 .ldis-hero-eyebrow {
@@ -379,7 +379,7 @@ body:has(.ldis-home) .ldis-footer-inner {
       linear-gradient(90deg, rgba(5, 31, 23, .88) 0%, rgba(7, 42, 29, .74) 58%, rgba(8, 44, 30, .43) 100%),
       linear-gradient(0deg, rgba(5, 28, 22, .52), rgba(5, 28, 22, .1) 80%);
   }
-  .ldis-hero-inner { align-items: flex-start; min-height: 100vh; min-height: 100svh; padding: 168px 22px 48px; }
+  .ldis-hero-inner { align-items: flex-start; min-height: 100vh; min-height: 100svh; padding: clamp(168px, 22vh, 205px) 22px 48px; }
   .ldis-hero-copy { max-width: 100%; }
   .ldis-hero-eyebrow { margin-bottom: 14px; font-size: 11px; }
   .ldis-hero h1 { max-width: 560px; font-size: clamp(2rem, 8.5vw, 2.85rem); line-height: 1.34; }
@@ -432,4 +432,318 @@ body:has(.ldis-home) .ldis-footer-inner {
     transition-duration: .01ms !important;
   }
   .ldis-hero::before { transform: none; }
+}
+
+
+/* --------------------------------------------------------------------------
+   LDIS shared visual system: forest green, warm ivory and restrained gold.
+   These rules are presentation-only; form actions, routes and data remain as-is.
+   -------------------------------------------------------------------------- */
+:root {
+  --ldis-forest: #0e3d2b;
+  --ldis-forest-deep: #08291f;
+  --ldis-green: #17583e;
+  --ldis-green-soft: #e8f2eb;
+  --ldis-gold: #c8a45c;
+  --ldis-ink: #142a22;
+  --ldis-muted: #65756c;
+  --ldis-border: #dce6df;
+  --ldis-surface: #ffffff;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 8% 3%, rgba(32, 105, 70, .055), transparent 27rem),
+    #f5f8f6;
+  color: var(--ldis-ink);
+}
+
+.ldis-site-header {
+  position: relative;
+  z-index: 30;
+  background: linear-gradient(105deg, #082d21 0%, #104632 58%, #0c3829 100%) !important;
+  box-shadow: 0 8px 24px rgba(7, 38, 27, .12);
+}
+.ldis-header-inner { min-height: 68px; }
+.ldis-brand { min-width: 0; text-decoration: none; }
+.ldis-brand-mark {
+  position: relative;
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.72);
+  border-radius: 50%;
+  background: #fff;
+  color: #123d2d;
+  box-shadow: 0 4px 14px rgba(0,0,0,.16);
+}
+.ldis-brand-mark img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+.ldis-brand-mark-fallback { display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; }
+.ldis-brand-copy { line-height: 1.25; }
+.ldis-brand-copy > span:first-child { letter-spacing: -.015em; }
+.ldis-brand-copy > span:last-child { margin-top: 3px; }
+.ldis-header-link,
+.ldis-header-signup,
+.ldis-header-signout button {
+  border-radius: 8px !important;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.ldis-header-link:hover,
+.ldis-header-signup:hover,
+.ldis-header-signout button:hover { transform: translateY(-1px); }
+
+/* Repeated smooth enter motion makes route-to-route use feel connected. */
+#main > :not(.ldis-home) {
+  animation: ldis-page-enter 480ms cubic-bezier(.2,.75,.25,1) both;
+}
+@keyframes ldis-page-enter {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Login / registration screens: centered panel over the softened hero photo. */
+body:has(.ldis-auth-screen) main#main.container-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+.ldis-auth-screen {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: max(640px, calc(100svh - 126px));
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(34px, 5vh, 58px) 20px;
+  background: #0c3828;
+}
+.ldis-auth-screen::before,
+.ldis-auth-screen::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+}
+.ldis-auth-screen::before {
+  background-image: url("/photo/hero.jpg");
+  background-position: center 43%;
+  background-size: cover;
+  filter: saturate(.88);
+  transform: scale(1.035);
+  animation: ldis-login-backdrop 12s ease-out both;
+}
+.ldis-auth-screen::after {
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(6, 35, 25, .18) 0%, rgba(5, 28, 21, .46) 68%, rgba(4, 24, 18, .66) 100%),
+    linear-gradient(135deg, rgba(7, 43, 30, .54), rgba(7, 40, 32, .3));
+  backdrop-filter: blur(2px);
+}
+@keyframes ldis-login-backdrop {
+  from { transform: scale(1.08); }
+  to { transform: scale(1.035); }
+}
+.ldis-auth-panel { width: min(100%, 480px); animation: ldis-login-card-in 650ms cubic-bezier(.18,.78,.28,1) both; }
+@keyframes ldis-login-card-in {
+  from { opacity: 0; transform: translateY(18px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ldis-login-card {
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.8) !important;
+  border-radius: 22px !important;
+  background: rgba(255, 255, 252, .97) !important;
+  box-shadow: 0 28px 80px rgba(0, 20, 13, .32), 0 2px 6px rgba(0,0,0,.08) !important;
+  backdrop-filter: blur(12px);
+}
+.ldis-login-card > header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 24px 28px 17px !important;
+  border-bottom: 1px solid #e7eee8 !important;
+  text-align: center;
+}
+.ldis-login-card > header::before {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9e9dd;
+  border-radius: 50%;
+  background: #eaf4ed;
+  color: #10543a;
+  content: "✓";
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 27px;
+  font-weight: 800;
+  box-shadow: inset 0 0 0 6px rgba(255,255,255,.6);
+}
+.ldis-login-card > header h2 { color: #102f23 !important; font-size: 1.75rem !important; font-weight: 800 !important; letter-spacing: -.03em; }
+.ldis-login-card > header p { color: #6b7a71 !important; font-size: 12px !important; line-height: 1.6; }
+.ldis-login-card > div { padding: 22px 28px 27px !important; }
+.ldis-login-card label { color: #243a30 !important; font-weight: 700 !important; }
+.ldis-login-card input {
+  min-height: 48px;
+  border-color: #cfddd3 !important;
+  border-radius: 10px !important;
+  background: #f9fbf9 !important;
+  box-shadow: inset 0 1px 2px rgba(13, 53, 35, .025);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+.ldis-login-card input:focus {
+  border-color: #408663 !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 4px rgba(42, 125, 80, .12) !important;
+  outline: none;
+}
+.ldis-login-card form > button[type="submit"] {
+  min-height: 49px !important;
+  margin-top: 3px;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(100deg, #0c593a, #176343) !important;
+  box-shadow: 0 8px 17px rgba(17, 91, 57, .2);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+.ldis-login-card form > button[type="submit"]:hover { transform: translateY(-1px); box-shadow: 0 11px 22px rgba(17, 91, 57, .27); filter: brightness(1.04); }
+.ldis-login-extras { display: grid; gap: 15px; margin-top: 20px; }
+.ldis-register-prompt { margin: 0; color: #68766e; font-size: 13px; text-align: center; }
+.ldis-register-prompt a { color: #145f40; font-weight: 800; text-underline-offset: 3px; }
+.ldis-demo-login {
+  padding: 15px 16px;
+  border: 1px solid #cfe3d5;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #f0f8f1, #fbfcf7);
+}
+.ldis-demo-title-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ldis-demo-kicker { margin: 0 0 3px; color: #64806f; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.ldis-demo-login h3 { margin: 0; color: #144b34; font-size: 15px; font-weight: 800; }
+.ldis-demo-badge { flex: 0 0 auto; border: 1px solid #c6dfcc; border-radius: 999px; padding: 4px 8px; color: #176140; background: #e6f4e9; font-size: 10px; font-weight: 800; }
+.ldis-demo-credentials { display: grid; gap: 7px; margin-top: 12px; }
+.ldis-demo-credential { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1px solid #e0eae2; border-radius: 8px; background: rgba(255,255,255,.8); }
+.ldis-demo-credential span { color: #718076; font-size: 11px; }
+.ldis-demo-credential code { overflow-wrap: anywhere; color: #183c2b; font-size: 12px; font-weight: 700; }
+.ldis-demo-action {
+  width: 100%;
+  margin-top: 11px;
+  min-height: 38px !important;
+  border-color: #a9cbb4 !important;
+  border-radius: 9px !important;
+  color: #16553a !important;
+  background: #fff !important;
+  transition: transform 180ms ease, background-color 180ms ease;
+}
+.ldis-demo-action:hover { transform: translateY(-1px); background: #edf7ef !important; }
+body:has(.ldis-auth-screen) .ldis-footer { margin-top: 0; border-top-color: rgba(255,255,255,.14); background: rgba(8,34,25,.96); }
+body:has(.ldis-auth-screen) .ldis-footer-inner { padding-top: 13px; padding-bottom: 13px; color: rgba(255,255,255,.68); text-align: center; }
+
+/* Shared role dashboard banners, cards, summaries, queues and forms. */
+.ldis-role-dashboard { color: var(--ldis-ink); }
+.ldis-role-dashboard > :first-child {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.13) !important;
+  border-radius: 23px !important;
+  background: linear-gradient(115deg, #082f24 0%, #104b36 58%, #153e30 100%) !important;
+  box-shadow: 0 16px 35px rgba(10, 53, 35, .14) !important;
+}
+.ldis-role-dashboard > :first-child::after {
+  position: absolute;
+  z-index: -1;
+  right: -84px;
+  bottom: -172px;
+  width: 370px;
+  height: 370px;
+  border: 1px solid rgba(212, 184, 116, .17);
+  border-radius: 50%;
+  box-shadow: 0 0 0 22px rgba(212,184,116,.035), 0 0 0 50px rgba(212,184,116,.025);
+  content: "";
+  pointer-events: none;
+}
+.ldis-role-dashboard > :first-child > * { position: relative; z-index: 1; }
+.ldis-role-dashboard > :first-child h1 { color: #fff !important; letter-spacing: -.03em; }
+.ldis-role-dashboard > :first-child p { line-height: 1.8; }
+.ldis-role-dashboard > section.grid > a,
+.ldis-role-dashboard > section.grid > article,
+.ldis-role-dashboard > section.grid > button,
+.ldis-role-dashboard section.grid > a > div {
+  border-color: var(--ldis-border) !important;
+  border-radius: 17px !important;
+  box-shadow: 0 3px 10px rgba(17, 57, 39, .035);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+.ldis-role-dashboard > section.grid > a:hover,
+.ldis-role-dashboard > section.grid > article:hover,
+.ldis-role-dashboard section.grid > a:hover > div { border-color: #bcd2c2 !important; box-shadow: 0 13px 27px rgba(17, 57, 39, .085); }
+.ldis-role-dashboard section[id],
+.ldis-role-dashboard > section:not(.grid) {
+  border-color: var(--ldis-border) !important;
+  border-radius: 17px !important;
+  box-shadow: 0 4px 13px rgba(17, 57, 39, .035);
+}
+.ldis-role-dashboard h2 { letter-spacing: -.018em; }
+.ldis-role-dashboard table { border-collapse: separate; border-spacing: 0; }
+.ldis-role-dashboard thead { background: #eef5ef; }
+.ldis-role-dashboard thead th { color: #234735; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.ldis-role-dashboard tbody tr { transition: background-color 150ms ease; }
+.ldis-role-dashboard tbody tr:hover { background-color: #f4f9f5; }
+.ldis-role-dashboard tbody td { border-color: #e8eee9; }
+.ldis-role-dashboard input,
+.ldis-role-dashboard select,
+.ldis-role-dashboard textarea,
+#main input,
+#main select,
+#main textarea {
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+.ldis-role-dashboard input:focus,
+.ldis-role-dashboard select:focus,
+.ldis-role-dashboard textarea:focus,
+#main input:focus,
+#main select:focus,
+#main textarea:focus { border-color: #4b8a68; box-shadow: 0 0 0 3px rgba(41, 123, 77, .11); outline: none; }
+.ldis-data-entry-dashboard > header { padding: clamp(23px, 4vw, 35px) !important; }
+.ldis-data-entry-dashboard > section { padding: clamp(18px, 3vw, 28px) !important; }
+.ldis-data-entry-dashboard > section form > div.rounded-xl,
+.ldis-data-entry-dashboard > section form > div.rounded-lg { border-radius: 12px !important; }
+
+/* Shared tool cards and generic content cards on workflow pages. */
+#main .group.rounded-2xl.border,
+#main a.group.block.h-full.rounded-2xl,
+#main section.rounded-lg.border.border-slate-200.bg-white.shadow-sm {
+  border-color: var(--ldis-border) !important;
+  box-shadow: 0 4px 14px rgba(13, 54, 35, .045);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+#main .group.rounded-2xl.border:hover,
+#main a.group.block.h-full.rounded-2xl:hover { border-color: #bed5c5 !important; box-shadow: 0 12px 28px rgba(13,54,35,.085); }
+#main table thead { background: #eef5ef; }
+#main table thead th { color: #244936; }
+#main table tbody tr:hover { background-color: #f5faf6; }
+#main button:not(:disabled) { transition: transform 170ms ease, box-shadow 170ms ease, background-color 170ms ease, border-color 170ms ease; }
+#main button:not(:disabled):active { transform: translateY(1px); }
+
+@media (max-width: 640px) {
+  .ldis-header-inner { gap: 10px; }
+  .ldis-brand-mark { width: 38px; height: 38px; flex-basis: 38px; }
+  .ldis-brand-copy > span:first-child { font-size: 13px; }
+  .ldis-brand-copy > span:last-child { font-size: 10px; }
+  .ldis-auth-screen { min-height: max(620px, calc(100svh - 120px)); padding: 28px 14px; }
+  .ldis-login-card { border-radius: 18px !important; }
+  .ldis-login-card > header { padding: 20px 19px 14px !important; }
+  .ldis-login-card > div { padding: 19px 18px 21px !important; }
+  .ldis-demo-login { padding: 13px 12px; }
+  .ldis-demo-credential { align-items: flex-start; flex-direction: column; gap: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #main > :not(.ldis-home), .ldis-auth-panel { animation: none !important; }
 }

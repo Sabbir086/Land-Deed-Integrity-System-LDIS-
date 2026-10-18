@@ -33,14 +33,22 @@ export default function AuthForm({ action, mode, next }) {
       <section className="ldis-demo-login" aria-label="Demo login details">
         <div className="ldis-demo-title-row">
           <div><p className="ldis-demo-kicker">Explore the interface</p><h3>Demo Login · ডেমো লগইন</h3></div>
-          <span className="ldis-demo-badge">VISITOR ACCESS</span>
+          <span className="ldis-demo-badge">2 DEMO ROLES</span>
         </div>
-        <div className="ldis-demo-credentials">
-          <div className="ldis-demo-credential"><span>Email</span><code>landtech@ldis.com</code></div>
-          <div className="ldis-demo-credential"><span>Password</span><code>12345678</code></div>
+        <div className="ldis-demo-account-list">
+          {[
+            { key: "user", title: "Demo User", subtitle: "সাধারণ ব্যবহারকারী", email: "landtech@ldis.com", password: "12345678" },
+            { key: "sub-registrar", title: "Demo Sub-Registrar", subtitle: "Manikganj Sadar", email: "sub_register.manikganj_sadar@ldis.com", password: "Abc@12345" },
+          ].map((account) => (
+            <div className="ldis-demo-account-row" key={account.key}>
+              <div className="ldis-demo-account-heading"><strong>{account.title}</strong><span>{account.subtitle}</span></div>
+              <div className="ldis-demo-credential"><span>Email</span><code>{account.email}</code></div>
+              <div className="ldis-demo-credential"><span>Password</span><code>{account.password}</code></div>
+              <Button type="button" variant="secondary" className="ldis-demo-action" onClick={() => { setEmail(account.email); setPassword(account.password); }}>ফর্মে বসান <span aria-hidden="true">↗</span></Button>
+            </div>
+          ))}
         </div>
-        <Button type="button" variant="secondary" className="ldis-demo-action" onClick={() => { setEmail("landtech@ldis.com"); setPassword("12345678"); }}>ডেমো তথ্য ফর্মে বসান <span aria-hidden="true">↗</span></Button>
-        <p className="mt-2 text-xs leading-5 text-slate-500">ডেমো অ্যাকাউন্টে প্রবেশের জন্য এই অ্যাকাউন্টটি সিস্টেমে আগে থেকে তৈরি ও অনুমোদিত থাকতে হবে।</p>
+        <p className="ldis-demo-note">ডেমো অ্যাকাউন্টে প্রবেশের জন্য সংশ্লিষ্ট অ্যাকাউন্টটি Supabase-এ আগে থেকে তৈরি এবং প্রয়োজনীয় role/approval-সহ সক্রিয় থাকতে হবে।</p>
       </section>
     </div>}
     </>

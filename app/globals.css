@@ -1447,3 +1447,111 @@ body:has(.ldis-signup-screen) .ldis-signup-card > header::before {
   .ldis-wizard-step-content { animation: none !important; }
   .ldis-wizard-step, .ldis-application-card, .ldis-staff-workflow-step, .ldis-staff-action-button { transition: none !important; }
 }
+
+/* Full-width application workspace: keep the left step rail, use the full
+   available viewport, and let the right column show contextual notices only. */
+body:has(.ldis-wizard) main#main.container-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(16px, 1.8vw, 30px) clamp(16px, 2.2vw, 40px) 38px;
+}
+.ldis-wizard {
+  width: 100%;
+  min-width: 0;
+}
+.ldis-wizard-layout {
+  grid-template-columns: minmax(220px, 17vw) minmax(0, 1fr);
+  gap: clamp(14px, 1.3vw, 22px);
+}
+.ldis-wizard-main,
+.ldis-wizard-form-card,
+.ldis-wizard-step-content,
+.ldis-wizard-summary { min-width: 0; }
+.ldis-wizard-step-content { padding: clamp(16px, 1.6vw, 26px); }
+.ldis-wizard-step-content > .space-y-4 > .rounded-lg.border,
+.ldis-wizard-step-content > .space-y-3 > .rounded-lg.border {
+  width: 100%;
+}
+.ldis-wizard-summary-card { padding: 17px; }
+.ldis-wizard-risk-intro,
+.ldis-wizard-risk-disclaimer,
+.ldis-wizard-risk-more { margin: 0; color: #6e7b73; font-size: 10px; line-height: 1.7; }
+.ldis-wizard-risk-list { display: grid; gap: 9px; margin: 12px 0; padding: 0; list-style: none; }
+.ldis-wizard-risk-list li { display: grid; gap: 5px; padding: 10px; border: 1px solid #e3e9e2; border-left: 3px solid #7e9b87; border-radius: 9px; background: #fbfcf8; }
+.ldis-wizard-risk-list li.is-high { border-left-color: #bd4e43; background: #fff8f6; }
+.ldis-wizard-risk-list li.is-medium { border-left-color: #c18a32; background: #fffaf0; }
+.ldis-wizard-risk-list li.is-unknown { border-left-color: #7d73b9; background: #faf9ff; }
+.ldis-wizard-risk-list li.is-info { border-left-color: #4c8ca5; background: #f7fbfd; }
+.ldis-wizard-risk-level { justify-self: start; padding: 3px 7px; border-radius: 999px; color: #52665a; background: #edf2ed; font-size: 9px; font-weight: 800; }
+.ldis-wizard-risk-list li.is-high .ldis-wizard-risk-level { color: #9f3029; background: #fce7e4; }
+.ldis-wizard-risk-list li.is-medium .ldis-wizard-risk-level { color: #845b16; background: #fff0ca; }
+.ldis-wizard-risk-list li.is-unknown .ldis-wizard-risk-level { color: #5e549e; background: #eeeaff; }
+.ldis-wizard-risk-list li.is-info .ldis-wizard-risk-level { color: #2d6c86; background: #e4f3f8; }
+.ldis-wizard-risk-list li strong { color: #264536; font-size: 11px; line-height: 1.6; }
+.ldis-wizard-risk-list li p,
+.ldis-wizard-risk-list li small { margin: 0; color: #738077; font-size: 10px; line-height: 1.65; overflow-wrap: anywhere; }
+.ldis-wizard-no-risks { display: flex; align-items: flex-start; gap: 9px; margin: 12px 0; padding: 11px; border: 1px solid #dce9df; border-radius: 10px; background: #f6faf6; }
+.ldis-wizard-no-risks > span { display: grid; width: 24px; height: 24px; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #fff; background: #38805a; font-weight: 800; }
+.ldis-wizard-no-risks p { margin: 0; color: #69786e; font-size: 10px; line-height: 1.75; }
+.ldis-wizard-no-risks strong { color: #24583e; }
+.ldis-wizard-risk-disclaimer { padding-top: 10px; border-top: 1px solid #edf0eb; }
+.ldis-wizard-summary-card > p:not(.ldis-wizard-risk-intro):not(.ldis-wizard-risk-disclaimer):not(.ldis-wizard-risk-more) { color: #6e7b73; font-size: 11px; line-height: 1.8; }
+.ldis-wizard-preflight-badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 5px 10px; color: #6e4a22; background: #fff0d8; font-size: 10px; font-weight: 800; }
+.ldis-wizard-preflight .ldis-wizard-step.is-locked { color: rgba(242, 248, 243, .65); }
+.ldis-wizard-preflight .ldis-wizard-step:disabled { opacity: .88; }
+.ldis-wizard-preflight .ldis-wizard-form-heading h2 { font-size: clamp(21px, 2vw, 27px); }
+.ldis-wizard-preflight .ldis-wizard-form-heading { padding: clamp(18px, 1.8vw, 26px); }
+.ldis-wizard-preflight .ldis-wizard-step-content { padding: clamp(18px, 2vw, 30px); }
+.ldis-wizard-preflight .ldis-wizard-step-content > form > .grid { align-items: start; }
+.ldis-wizard-preflight .ldis-wizard-step-content input[type="date"],
+.ldis-wizard-preflight .ldis-wizard-step-content select { min-height: 46px; }
+.ldis-wizard-preflight-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-top: 4px; }
+.ldis-wizard-preflight-actions > span { color: #758278; font-size: 11px; line-height: 1.7; }
+.ldis-wizard-preflight-actions button { min-height: 44px; border-radius: 9px; }
+.ldis-wizard-gate-notice { border-color: #eadcc8; background: linear-gradient(145deg, #fffaf2, #fffdf8); }
+
+@media (min-width: 1200px) {
+  .ldis-wizard-layout { grid-template-columns: minmax(230px, 17vw) minmax(0, 1fr) minmax(270px, 21vw); }
+  .ldis-wizard-summary { display: grid; align-content: start; gap: 13px; }
+  .ldis-wizard-step { grid-template-columns: 31px minmax(0, 1fr) 12px; gap: 9px; padding: 10px 8px; }
+  .ldis-wizard-step-index { width: 30px; height: 30px; }
+  .ldis-wizard-step-copy strong { font-size: 12px; }
+  .ldis-wizard-step-copy small { font-size: 9px; }
+}
+@media (min-width: 761px) and (max-width: 1199px) {
+  .ldis-wizard-layout { grid-template-columns: minmax(210px, 24vw) minmax(0, 1fr); }
+  .ldis-wizard-summary { display: none; }
+}
+@media (min-width: 641px) {
+  body:has(.ldis-demo-login) .ldis-auth-panel { width: min(100%, 1120px); }
+  body:has(.ldis-demo-login) .ldis-login-card > div { padding: 20px clamp(20px, 3vw, 36px) 24px !important; }
+  body:has(.ldis-demo-login) .ldis-login-card > div > form { width: min(100%, 480px); margin-inline: auto; }
+  body:has(.ldis-demo-login) .ldis-login-extras { margin-top: 16px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-list { display: grid; gap: 8px; margin-top: 12px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row { display: grid; grid-template-columns: minmax(145px, .75fr) minmax(245px, 1.45fr) minmax(145px, .85fr) auto; align-items: center; gap: 9px; padding: 9px; border: 1px solid #deeadf; border-radius: 10px; background: rgba(255,255,255,.78); }
+  body:has(.ldis-demo-login) .ldis-demo-account-heading { display: grid; gap: 3px; min-width: 0; }
+  body:has(.ldis-demo-login) .ldis-demo-account-heading strong { color: #194b34; font-size: 12px; line-height: 1.45; }
+  body:has(.ldis-demo-login) .ldis-demo-account-heading span { color: #758278; font-size: 10px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row .ldis-demo-credential { min-width: 0; margin: 0; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row .ldis-demo-credential code { overflow-wrap: anywhere; font-size: 10px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row .ldis-demo-action { width: auto; min-width: 114px; margin: 0; white-space: nowrap; }
+  body:has(.ldis-demo-login) .ldis-demo-note { margin: 8px 0 0; color: #718076; font-size: 10px; line-height: 1.6; }
+}
+@media (max-width: 640px) {
+  body:has(.ldis-demo-login) .ldis-auth-panel { width: min(100%, 440px); }
+  body:has(.ldis-demo-login) .ldis-demo-account-list { display: grid; gap: 9px; margin-top: 11px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row { display: grid; gap: 8px; padding: 10px; border: 1px solid #deeadf; border-radius: 10px; background: rgba(255,255,255,.78); }
+  body:has(.ldis-demo-login) .ldis-demo-account-heading { display: grid; gap: 2px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-heading strong { color: #194b34; font-size: 12px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-heading span { color: #758278; font-size: 10px; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row .ldis-demo-credential { margin: 0; }
+  body:has(.ldis-demo-login) .ldis-demo-account-row .ldis-demo-action { width: 100%; margin: 0; }
+  body:has(.ldis-demo-login) .ldis-demo-note { margin: 8px 0 0; color: #718076; font-size: 10px; line-height: 1.6; }
+  .ldis-wizard-preflight-actions { align-items: stretch; flex-direction: column; }
+  .ldis-wizard-preflight-actions button { width: 100%; }
+}
+@media (min-width: 1200px) {
+  /* The right notice column owns these indicators on wide screens. */
+  .ldis-wizard-indicators { display: none; }
+}

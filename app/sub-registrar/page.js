@@ -19,7 +19,7 @@ export default async function SubRegistrarDashboard() {
   const { profile } = await requireRole(["sub_registrar"]);
   const { data, error } = await createClient().rpc("staff_queue", { p_status: null });
   const rows = data?.applications || [];
-  return <main className="space-y-6">
+  return <main className="ldis-role-dashboard ldis-subregistrar-dashboard space-y-6">
     <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 p-6 text-white shadow-xl sm:p-8">
       <p className="text-xs font-bold tracking-[.2em] text-teal-300">LDIS · SUB-REGISTRAR</p>
       <h1 className="mt-3 text-2xl font-bold sm:text-3xl">{profile.full_name || profile.email}</h1>

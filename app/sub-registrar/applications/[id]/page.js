@@ -82,7 +82,8 @@ export default async function RegistrarApplication({ params }) {
   const governmentRows = governmentMatches.length ? governmentMatches : (governmentInterest ? [{ record_type: "GOVT_INTEREST_MATCH", dag_no: "—", agency: "—", area: null, reference_note: governmentFlag?.detail || governmentFlag?.bn || "লাইভ রেফারেন্স ডেটাবেজে সরকারি স্বার্থ/নিষেধাজ্ঞার মিল পাওয়া গেছে।" }] : []);
   const ownership = data.ownership || null;
   const nameScore = ownership?.route === "record_owner" && ownership.name_score != null ? Number(ownership.name_score) : null;
-  const attestationRequired = nameScore !== null && nameScore >= 0.5 && nameScore < 0.9;
+  const fatherScore = ownership?.route === "record_owner" && ownership.father_score != null ? Number(ownership.father_score) : null;
+  const attestationRequired = [nameScore, fatherScore].some((score) => score !== null && score >= 0.5 && score < 0.9);
   const affidavitRequired = nameScore !== null && nameScore < 0.5;
   const registrarApproved = Boolean(data.registrar_approved);
 
@@ -133,8 +134,8 @@ export default async function RegistrarApplication({ params }) {
           <OwnershipSummary ownership={ownership} />
           <RegistrarChecklistItem itemId={4} />
           <RegistrarChecklistItem itemId={5} />
-          {attestationRequired && <Alert tone={ownership.attestation_verified ? "success" : "warn"} title="প্রত্যয়ন নম্বর যাচাই · Name match 50%–89%">
-            নামের মিল {Math.round(nameScore * 100)}%। {ownership.attestation_verified ? `প্রত্যয়ন নম্বর ${ownership.attestation_no || "—"} আবেদনকারী reference database-এ যাচাই করেছেন।` : "আবেদনকারী এখনো ধাপ ৩-এ প্রত্যয়নপত্র নম্বর দিয়ে যাচাই করেননি।"} ফাইল upload বাধ্যতামূলক নয়; সাব-রেজিস্ট্রার চূড়ান্ত পর্যালোচনা করবেন।
+          {attestationRequired && <Alert tone={ownership.attestation_verified ? "success" : "warn"} title="প্রত্যয়ন নম্বর যাচাই · Name / father-name match 50%–89%">
+            নামের মিল {nameScore === null ? "—" : `${Math.round(nameScore * 100)}%`}, পিতার নামের মিল {fatherScore === null ? "—" : `${Math.round(fatherScore * 100)}%`}। {ownership.attestation_verified ? `প্রত্যয়ন নম্বর ${ownership.attestation_no || "—"} আবেদনকারী reference database-এ যাচাই করেছেন।` : "নাম বা পিতার নামের মিল ৫০%–৯০%-এর কম হওয়ায় আবেদনকারীর ধাপ ৩-এ প্রত্যয়নপত্র নম্বর যাচাই বাকি।"} ফাইল upload বাধ্যতামূলক নয়; সাব-রেজিস্ট্রার চূড়ান্ত পর্যালোচনা করবেন।
           </Alert>}
           {affidavitRequired && <Alert tone={a.affidavit_declaration ? "success" : "warn"} title="মূল Affidavit এবং সাব-রেজিস্ট্রারের দায়-স্বীকার · Name match below 50%">
             নামের মিল {Math.round(nameScore * 100)}%। Affidavit-এর কোনো database, upload বা online verification নেই। বায়োমেট্রিকের পরে সাব-রেজিস্ট্রার মূল Affidavit দেখেছেন এবং আদালত থেকে ম্যানুয়ালি যাচাই করেছেন—এই ঘোষণা দিয়ে দায় গ্রহণ না করা পর্যন্ত registration হবে না। বর্তমান অবস্থা: {a.affidavit_declaration ? "দায়-স্বীকার ঘোষণা সংরক্ষিত" : "ঘোষণা বাকি"}।

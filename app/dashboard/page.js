@@ -18,7 +18,7 @@ export default async function UserDashboard() {
     { href: "/dashboard/applications/new", title: "দলিল নিবন্ধনের আবেদন", en: "Apply for deed registration", description: "জমির তথ্য, দাতা-গ্রহীতা যাচাই, ফি ও প্রয়োজনীয় ধাপ সম্পন্ন করুন।", icon: "＋", tone: "from-orange-500 to-amber-500", stat: "নতুন আবেদন শুরু করুন" },
     { href: "/dashboard/applications", title: "আবেদনের অবস্থা", en: "Application status", description: "আপনার খসড়া, জমা দেওয়া আবেদন এবং সর্বশেষ অগ্রগতি দেখুন।", icon: "▤", tone: "from-teal-600 to-cyan-600", stat: `${total}টি আবেদন · ${pending}টি চলমান` },
   ];
-  return <main className="space-y-7">
+  return <main className="ldis-role-dashboard ldis-user-dashboard space-y-7">
     <div className="rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-6 text-white shadow-xl sm:p-9">
       <p className="text-sm font-semibold tracking-wide text-amber-300">LAND DEED INTEGRITY SYSTEM</p>
       <h1 className="mt-3 text-2xl font-bold sm:text-3xl">স্বাগতম, {profile.full_name || profile.email}</h1><p className="mt-2 max-w-2xl text-sm text-slate-300">আপনার দলিল নিবন্ধন আবেদন শুরু করুন অথবা আগের আবেদনের অগ্রগতি দেখুন।</p>

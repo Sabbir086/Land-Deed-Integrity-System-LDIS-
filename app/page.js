@@ -69,13 +69,13 @@ export default async function Home() {
       <section className="ldis-hero" aria-labelledby="ldis-hero-title">
         <div className="ldis-hero-inner">
           <div className="ldis-hero-copy">
-            <p className="ldis-hero-eyebrow"><span aria-hidden="true" /> তথ্য যাচাইয়ের সহায়ক প্ল্যাটফর্ম</p>
-            <h1 id="ldis-hero-title">জমি বিক্রির আগে <span>তথ্য যাচাই করুন</span></h1>
+            <p className="ldis-hero-eyebrow"><span aria-hidden="true" /> ডিজিটাল ভূমি নিবন্ধন প্ল্যাটফর্ম</p>
+            <h1 id="ldis-hero-title">জমির দলিল নিবন্ধন হোক <span>সহজ, নিরাপদ ও ডিজিটাল</span></h1>
             <p className="ldis-hero-description">
-              NID, পর্চা/খতিয়ান, পূর্ববর্তী দলিল, ওয়ারিশ সনদ, সরকারি স্বার্থ ও ই-চালানের তথ্য একই জায়গায় মিলিয়ে দেখুন — উৎস, ফলাফল ও অনিশ্চয়তাসহ।
+              আবেদন থেকে তথ্য যাচাই ও নিবন্ধন প্রক্রিয়া—জমির দলিলসংক্রান্ত গুরুত্বপূর্ণ ধাপগুলো সম্পন্ন করুন একটি সমন্বিত ডিজিটাল প্ল্যাটফর্মে। কম কাগজপত্র, স্বচ্ছ কার্যক্রম এবং সহজে অগ্রগতি অনুসরণের সুবিধা নিন।
             </p>
             <p className="ldis-hero-english">
-              Check identity, land records, earlier deeds, government interest and fees in one place.
+              Apply, verify and track your deed registration in one secure place.
             </p>
             <div className="ldis-hero-actions">
               {profile ? (
@@ -84,16 +84,40 @@ export default async function Home() {
                 </Link>
               ) : (
                 <>
-                  <Link href="/login" className="ldis-button ldis-button-primary">
-                    লগইন <span aria-hidden="true">↗</span>
+                  <Link href="/signup" className="ldis-button ldis-button-primary">
+                    নিবন্ধন শুরু করুন <span aria-hidden="true">↗</span>
                   </Link>
-                  <Link href="/signup" className="ldis-button ldis-button-secondary">
-                    নতুন অ্যাকাউন্ট
+                  <Link href="#ldis-about-title" className="ldis-button ldis-button-secondary">
+                    প্রক্রিয়াটি জানুন
                   </Link>
                 </>
               )}
             </div>
-            <p className="ldis-hero-note"><span aria-hidden="true">ⓘ</span> এটি রেফারেন্স ডেটা-ভিত্তিক পরীক্ষামূলক সহায়ক ব্যবস্থা।</p>
+            <p className="ldis-hero-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 20 6v5.2c0 5.1-3.3 8.3-8 10.2-4.7-1.9-8-5.1-8-10.2V6z" /><path d="m8.5 12 2.2 2.2 4.8-5" /></svg>
+              স্বচ্ছ প্রক্রিয়া <span aria-hidden="true">•</span> সহজ অগ্রগতি অনুসরণ
+            </p>
+          </div>
+        </div>
+        <div className="ldis-process-flow" role="list" aria-label="নিবন্ধন প্রক্রিয়ার ধাপ">
+          <div className="ldis-process-track" aria-hidden="true"><span /><span /></div>
+          <div className="ldis-process-step ldis-process-step-1" role="listitem">
+            <span className="ldis-process-ripple" aria-hidden="true" />
+            <span className="ldis-process-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h7l4 4V20a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" /><path d="M13.5 3.5V8h4M8.5 12h6.5M8.5 15.5h6.5" /></svg></span>
+            <span className="ldis-process-number">1</span>
+            <span className="ldis-process-label">আবেদন</span>
+          </div>
+          <div className="ldis-process-step ldis-process-step-2" role="listitem">
+            <span className="ldis-process-ripple" aria-hidden="true" />
+            <span className="ldis-process-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.7" cy="10.7" r="6.2" /><path d="m15.3 15.3 5 5" /></svg></span>
+            <span className="ldis-process-number">2</span>
+            <span className="ldis-process-label">যাচাই</span>
+          </div>
+          <div className="ldis-process-step ldis-process-step-3" role="listitem">
+            <span className="ldis-process-ripple" aria-hidden="true" />
+            <span className="ldis-process-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.8 20 6v5.2c0 5.1-3.3 8.3-8 10.2-4.7-1.9-8-5.1-8-10.2V6z" /><path d="m8.5 12 2.2 2.2 4.8-5" /></svg></span>
+            <span className="ldis-process-number">3</span>
+            <span className="ldis-process-label">নিবন্ধন</span>
           </div>
         </div>
         <div className="ldis-hero-bottom-rule" aria-hidden="true" />

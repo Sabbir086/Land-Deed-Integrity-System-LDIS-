@@ -3,12 +3,14 @@ import { useState } from "react";
 import { Alert, Button, Card, DataTable, Field, Input, Select } from "@/components/ui";
 import { createClient } from "@/lib/supabase/browser";
 import { DOC_TYPES } from "@/lib/applications/status";
+import { isAttestationScore } from "@/lib/applications/steps";
 
 const OK = ["application/pdf", "image/jpeg", "image/png"]; const MAX = 5 * 1024 * 1024;
 
 export default function StepDocuments({ view, call, busy: parentBusy }) {
   const nameScore = view.ownership?.route === "record_owner" && view.ownership.name_score != null ? Number(view.ownership.name_score) : null;
-  const attestationRequired = nameScore !== null && nameScore >= 0.5 && nameScore < 0.9;
+  const fatherScore = view.ownership?.route === "record_owner" && view.ownership.father_score != null ? Number(view.ownership.father_score) : null;
+  const attestationRequired = isAttestationScore(nameScore) || isAttestationScore(fatherScore);
   const [type, setType] = useState("porcha_copy"); const [file, setFile] = useState(null); const [msg, setMsg] = useState(null); const [up, setUp] = useState(false);
   const busy = parentBusy || up;
 
@@ -39,7 +41,7 @@ export default function StepDocuments({ view, call, busy: parentBusy }) {
     <div className="space-y-4">
       {attestationRequired ? (
         <Alert tone="info" title="প্রত্যয়ন নম্বর ধাপ ৩-এ যাচাই করুন">
-          নামের মিল {Math.round(nameScore * 100)}%। প্রত্যয়নপত্রের নম্বর ধাপ ৩ (মালিকানার ভিত্তি)-এ লিখে যাচাই করতে হবে। প্রত্যয়নপত্রের ফাইল upload বাধ্যতামূলক নয়; এই ধাপ সহায়ক নথি আপলোডের জন্য।
+          নামের মিল {nameScore === null ? "—" : `${Math.round(nameScore * 100)}%`} এবং পিতার নামের মিল {fatherScore === null ? "—" : `${Math.round(fatherScore * 100)}%`}। যেকোনো একটি ৫০%–৯০%-এর কম হলে প্রত্যয়নপত্রের নম্বর ধাপ ৩ (মালিকানার ভিত্তি)-এ লিখে যাচাই করতে হবে। প্রত্যয়নপত্রের ফাইল upload বাধ্যতামূলক নয়; এই ধাপ সহায়ক নথি আপলোডের জন্য।
         </Alert>
       ) : <Alert tone="info">সহায়ক নথি ঐচ্ছিক (সর্বোচ্চ ১০টি, প্রতিটি ৫ MB; PDF/JPG/PNG)। নথিগুলো ব্যক্তিগত স্টোরেজে থাকে। Affidavit upload বা online verification প্রয়োজন নেই।</Alert>}
       <Card title="নথি আপলোড · Upload a document">

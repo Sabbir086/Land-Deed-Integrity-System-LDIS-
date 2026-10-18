@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Alert, Badge, Button, Card, Field, Input, Select } from "@/components/ui";
 import { fmtArea, fmtDate } from "@/lib/utils";
 import { pct } from "@/lib/applications/format";
+import { isAttestationScore } from "@/lib/applications/steps";
 
 const ROUTES = [
   ["record_owner", "রেকর্ডীয় মালিক", "Recorded owner (porcha)"],
@@ -48,7 +49,8 @@ export default function StepOwnership({ view, call, busy }) {
   const ready = (needsOwner ? ownerId : true) && (route !== "warish" || cert) && (route !== "baya_deed" || (deedNo && deedDate));
   const identityEvidence = view.identity_evidence || {};
   const nameScore = cur?.route === "record_owner" && cur.name_score != null ? Number(cur.name_score) : null;
-  const attestationRequired = nameScore !== null && nameScore >= 0.5 && nameScore < 0.9;
+  const fatherScore = cur?.route === "record_owner" && cur.father_score != null ? Number(cur.father_score) : null;
+  const attestationRequired = isAttestationScore(nameScore) || isAttestationScore(fatherScore);
   const attestationVerified = identityEvidence.attestation_verified === true && identityEvidence.attestation_no === attestationNo.trim();
   function save(e) { e.preventDefault(); call("ownership", { route, owner_id: needsOwner ? ownerId : undefined, cert_no: cert, deed_no: deedNo, deed_date: deedDate }); }
   async function verifyAttestation() {
@@ -102,7 +104,7 @@ export default function StepOwnership({ view, call, busy }) {
       {attestationRequired && (
         <Card title="প্রত্যয়নপত্র নম্বর দিয়ে যাচাই · Verify attestation by certificate number">
           <p className="mb-3 text-sm text-slate-600">
-            নামের মিল {Math.round(nameScore * 100)}%। প্রত্যয়নপত্রের নম্বর লিখে reference database-এর সঙ্গে যাচাই করুন। এই কাজের জন্য Affidavit-এর কোনো নম্বর, upload বা online verification নেই।
+            নামের মিল {nameScore === null ? "—" : `${Math.round(nameScore * 100)}%`} এবং পিতার নামের মিল {fatherScore === null ? "—" : `${Math.round(fatherScore * 100)}%`}। যেকোনো একটি ৫০%–৯০%-এর কম হলে প্রত্যয়নপত্রের নম্বর দিয়ে reference database-এ যাচাই করুন।
           </p>
           <form onSubmit={(e) => { e.preventDefault(); verifyAttestation(); }} className="space-y-3">
             <Field label="প্রত্যয়নপত্র নম্বর · Attestation number" htmlFor="owner-attestation-no" hint="প্রত্যয়নপত্রে থাকা নম্বর হুবহু লিখুন।">

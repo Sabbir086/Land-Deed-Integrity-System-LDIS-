@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { Alert, Badge, Button, Card, DataTable, Field, Input } from "@/components/ui";
 import { fmtArea, fmtDate } from "@/lib/utils";
+import { isAttestationScore } from "@/lib/applications/steps";
 
 function Analysis({ p }) {
   const h = p.history || {};
@@ -47,9 +48,9 @@ export default function StepPlots({ view, call, busy }) {
           নামের মিল {Math.round(Number(view.ownership.name_score) * 100)}%। এই ধাপে Affidavit অনলাইনে যাচাই বা আপলোড করতে হবে না। আবেদনকারীকে পরবর্তী ধাপ সম্পন্ন করতে দিন; নিবন্ধনের আগে সাব-রেজিস্ট্রারকে বায়োমেট্রিকের দিন মূল Affidavit গ্রহণের ঘোষণা সংরক্ষণ করতে হবে।
         </Alert>
       )}
-      {view.ownership?.route === "record_owner" && view.ownership.name_score != null && Number(view.ownership.name_score) >= 0.5 && Number(view.ownership.name_score) < 0.9 && (
+      {view.ownership?.route === "record_owner" && (isAttestationScore(view.ownership.name_score) || isAttestationScore(view.ownership.father_score)) && (
         <Alert tone="warn" title="প্রত্যয়নপত্রের নম্বর যাচাই করুন">
-          নামের মিল {Math.round(Number(view.ownership.name_score) * 100)}%। ধাপ ৩-এ মালিকানার তথ্যের নিচে প্রত্যয়নপত্র নম্বর দিয়ে verify করুন। ফাইল upload বাধ্যতামূলক নয়।
+          নামের মিল {view.ownership.name_score == null ? "—" : `${Math.round(Number(view.ownership.name_score) * 100)}%`} এবং পিতার নামের মিল {view.ownership.father_score == null ? "—" : `${Math.round(Number(view.ownership.father_score) * 100)}%`}। ধাপ ৩-এ প্রত্যয়ন নম্বর যাচাই করুন। যাচাই সফল না হওয়া পর্যন্ত পরবর্তী ধাপ খোলা হবে না।
         </Alert>
       )}
       <Card title="দাগ নির্বাচন ও বিক্রির পরিমাণ · Select dags and area" subtitle="এক বা একাধিক দাগ; পরিমাণ শতকে (সর্বোচ্চ ৪ দশমিক)">

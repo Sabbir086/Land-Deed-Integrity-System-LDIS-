@@ -69,7 +69,6 @@ export default function Wizard({ initial }) {
   const completionPct = Math.round((completedSteps / LAST_STEP) * 100);
   const activePct = Math.max(completionPct, Math.round(((step - 1) / LAST_STEP) * 100));
   const attestationPending = needsAttestation(view) && view.identity_evidence?.attestation_verified !== true;
-  const summarySteps = STEPS.map((s) => ({ ...s, done: stepDone(view, s.n) }));
 
   if (!view.application.deed_nature) {
     return <DeedNatureGate applicationNo={view.application.application_no} busy={busy}
@@ -165,25 +164,29 @@ export default function Wizard({ initial }) {
         </main>
 
         <aside className="ldis-wizard-summary" aria-label="আবেদনের সারাংশ">
-          <section className="ldis-wizard-summary-card ldis-wizard-summary-progress">
-            <div className="ldis-wizard-summary-title"><span>◷</span><h3>আবেদনের অগ্রগতি</h3></div>
-            <div className="ldis-wizard-summary-score">
-              <div className="ldis-wizard-progress-ring" style={{ "--ldis-progress": `${completionPct}%` }}><div><strong>{completedSteps}</strong><span>/{LAST_STEP}</span></div></div>
-              <div><strong>{completionPct}%</strong><span>ধাপ সম্পন্ন</span><small>বর্তমান ধাপ {step}: {STEPS[step - 1].bn}</small></div>
-            </div>
-            <ol className="ldis-wizard-summary-list">
-              {summarySteps.map((s) => <li key={s.n} className={s.n === step ? "is-current" : s.done ? "is-done" : ""}>
-                <span>{s.done ? "✓" : s.n}</span><span>{s.bn}</span>
-              </li>)}
-            </ol>
+          <section className="ldis-wizard-summary-card ldis-wizard-risk-card">
+            <div className="ldis-wizard-summary-title"><span>!</span><h3>ঝুঁকি ও সতর্কতা</h3></div>
+            {flags.length > 0 ? <>
+              <p className="ldis-wizard-risk-intro">এ পর্যন্ত পাওয়া যাচাই-সূচকগুলো পর্যালোচনা করুন। এগুলো নিজে থেকে আবেদন অনুমোদন বা বাতিল করে না।</p>
+              <ul className="ldis-wizard-risk-list">
+                {flags.slice(0, 5).map((flag, index) => <li key={`${flag.code}-${index}`} className={`is-${flag.level || "info"}`}>
+                  <span className="ldis-wizard-risk-level">{{ high: "উচ্চ ঝুঁকি", medium: "মনোযোগ", unknown: "তথ্য অসম্পূর্ণ", info: "তথ্য" }[flag.level] || "পর্যালোচনা"}</span>
+                  <strong>{flag.bn}</strong>
+                  {flag.detail && <p>{flag.detail}</p>}
+                  <small>{flag.en}</small>
+                </li>)}
+              </ul>
+              {flags.length > 5 && <p className="ldis-wizard-risk-more">আরও {flags.length - 5}টি সূচক আছে। মূল ধাপের যাচাই-ফলাফলও দেখুন।</p>}
+            </> : <div className="ldis-wizard-no-risks"><span aria-hidden="true">✓</span><p><strong>এখনো কোনো ঝুঁকি-সূচক নেই</strong><br />পরিচয়, জমির রেকর্ড, মালিকানা বা চালান যাচাইয়ের ফলাফল এলে এখানে সতর্কতা দেখাবে।</p></div>}
+            <p className="ldis-wizard-risk-disclaimer">রেফারেন্স ডেটাবেজের ফলাফল সহায়ক তথ্য; এটি সরকারি ছাড়পত্র বা আইনগত মালিকানার প্রমাণ নয়।</p>
           </section>
           <section className="ldis-wizard-summary-card">
-            <div className="ldis-wizard-summary-title"><span>i</span><h3>আবেদনের আগে মনে রাখুন</h3></div>
+            <div className="ldis-wizard-summary-title"><span>i</span><h3>গুরুত্বপূর্ণ নোটিশ</h3></div>
             <ul className="ldis-wizard-tips">
-              <li>সঠিক পরিচয় ও জমির তথ্য দিন</li>
-              <li>প্রয়োজনীয় কাগজপত্র প্রস্তুত রাখুন</li>
-              <li>চালান নম্বর ও ফি যাচাই করুন</li>
-              <li>জমা দেওয়ার আগে সব তথ্য পর্যালোচনা করুন</li>
+              <li>নাম, NID ও জন্মতারিখে অমিল থাকলে আগে যাচাই করুন</li>
+              <li>রেকর্ড না পাওয়া মানেই জমি বা দলিল বৈধ—এমন নয়</li>
+              <li>চালানের নম্বর, ফি-এর ধরন ও পরিমাণ মিলিয়ে দেখুন</li>
+              <li>আবেদন জমা দেওয়ার আগে সব তথ্য আবার পর্যালোচনা করুন</li>
             </ul>
           </section>
           <Link href="/dashboard/applications" className="ldis-wizard-help-card">

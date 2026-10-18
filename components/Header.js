@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSessionProfile } from "@/lib/auth";
 import { ROLE_LABEL, homeFor } from "@/lib/roles";
 import { Button } from "@/components/ui";
+import BrandMark from "@/components/BrandMark";
 
 export default async function Header() {
   let profile = null;
@@ -15,7 +16,7 @@ export default async function Header() {
   return <header className="ldis-site-header border-b-4 border-gov-red bg-brand-800 text-white">
     <div className="ldis-header-inner container-page flex flex-wrap items-center justify-between gap-3 py-3">
       <Link href="/" className="ldis-brand flex items-center gap-3">
-        <span aria-hidden="true" className="ldis-brand-mark flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg font-bold text-brand-800">ভূ</span>
+        <BrandMark className="ldis-brand-mark" size={42} />
         <span className="ldis-brand-copy"><span className="block text-base font-bold leading-tight">ভূমি দলিল যাচাই ও নিবন্ধন</span><span className="block text-xs text-brand-100">Land Deed Verification &amp; Registration</span></span>
       </Link>
       <nav aria-label="Main" className="ldis-header-nav flex flex-wrap items-center gap-1 text-sm">

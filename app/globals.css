@@ -1524,12 +1524,12 @@ body:has(.ldis-wizard) main#main.container-page {
   .ldis-wizard-summary { display: none; }
 }
 @media (min-width: 641px) {
-  body:has(.ldis-demo-login) .ldis-auth-panel { box-sizing: border-box; width: min(100%, 580px); }
-  body:has(.ldis-demo-login) .ldis-login-card > div { padding: 18px 22px 20px !important; }
-  body:has(.ldis-demo-login) .ldis-login-card > div > form { width: min(100%, 480px); margin-inline: auto; }
+  body:has(.ldis-demo-login) .ldis-auth-panel { box-sizing: border-box; width: min(100%, 540px); }
+  body:has(.ldis-demo-login) .ldis-login-card > div { padding: 16px 18px 18px !important; }
+  body:has(.ldis-demo-login) .ldis-login-card > div > form { width: min(100%, 460px); margin-inline: auto; }
   body:has(.ldis-demo-login) .ldis-login-extras { margin-top: 13px; }
   body:has(.ldis-demo-login) .ldis-demo-account-list { display: grid; gap: 7px; margin-top: 10px; }
-  body:has(.ldis-demo-login) .ldis-demo-account-row { display: grid; grid-template-columns: minmax(96px, .65fr) minmax(170px, 1.25fr) minmax(100px, .75fr) auto; align-items: center; gap: 7px; padding: 7px; border: 1px solid #deeadf; border-radius: 10px; background: rgba(255,255,255,.78); }
+  body:has(.ldis-demo-login) .ldis-demo-account-row { display: grid; grid-template-columns: minmax(80px, .55fr) minmax(150px, 1.2fr) minmax(125px, .85fr) auto; align-items: center; gap: 7px; padding: 7px; border: 1px solid #deeadf; border-radius: 10px; background: rgba(255,255,255,.78); }
   body:has(.ldis-demo-login) .ldis-demo-account-heading { display: grid; gap: 3px; min-width: 0; }
   body:has(.ldis-demo-login) .ldis-demo-account-heading strong { color: #194b34; font-size: 12px; line-height: 1.45; }
   body:has(.ldis-demo-login) .ldis-demo-account-heading span { color: #758278; font-size: 10px; }
